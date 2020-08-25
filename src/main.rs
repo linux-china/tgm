@@ -7,6 +7,7 @@ use crate::models::AppTemplate;
 use std::fs::File;
 use std::collections::HashMap;
 use std::path::Path;
+use std::io::Write;
 
 fn main() {
     let sub_command = env::args().nth(1);
@@ -94,11 +95,21 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
         std::io::stdin().read_line(&mut input).unwrap();
         variables.insert(format!("@{}@", v.name), String::from(input.trim()));
     }
-    println!("{:?}", variables);
+    for file in app_template.files.iter() {
+        let resource_file = format!("{}/{}", app_dest_dir, file);
+        replace_variables(&resource_file, &variables);
+    }
 }
 
-fn is_legal(file: File) -> bool {
-    return true;
+fn replace_variables(resource_file: &String, variables: &HashMap<String, String>) {
+    let path = Path::new(resource_file);
+    let content = fs::read_to_string(path).unwrap();
+    let mut replaced_text = content.clone();
+    for (k, v) in variables.iter() {
+        replaced_text = replaced_text.replacen(k.as_str(), v.as_str(), 1024);
+    }
+    let mut file = File::create(path).unwrap();
+    file.write_all(replaced_text.as_bytes()).unwrap();
 }
 
 #[cfg(test)]
