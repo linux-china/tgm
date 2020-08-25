@@ -8,6 +8,7 @@ use std::fs::File;
 use std::collections::HashMap;
 use std::path::Path;
 use std::io::Write;
+use colored::*;
 
 fn main() {
     let sub_command = env::args().nth(1);
@@ -90,7 +91,7 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
     for v in app_template.variables.iter() {
-        println!("{}>", v.name);
+        println!("{}>", v.name.as_str().green());
         let mut input = String::new();
         std::io::stdin().read_line(&mut input).unwrap();
         variables.insert(format!("@{}@", v.name), String::from(input.trim()));
