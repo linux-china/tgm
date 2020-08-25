@@ -5,8 +5,7 @@ Generate project structure from git template repository
 
 # tgm Settings
 
-* .tgm/templates.json: 保存所有template信息
-* .tgm/global_variables.json 保存默认的全局变量信息
+~/.tgm/settings.json 保存所有的配置信息，如模板列表，全局变量等。
 
 # Template repository
 在template repository中会包含一个template.json，包括模板的信息，目前主要是模板变量。
@@ -23,3 +22,5 @@ Generate project structure from git template repository
 # References
 
 * Command line utilities: https://lib.rs/command-line-utilities
+* Command-line apps in Rust: https://www.rust-lang.org/what/cli
+* Serde: framework for serializing and deserializing Rust data structures https://serde.rs/
