@@ -31,6 +31,7 @@ pub struct AppTemplate {
     pub description: String,
     pub auto_run: String,
     pub variables: Vec<Variable>,
+    pub files: Vec<String>,
 }
 
 impl Settings {
