@@ -24,11 +24,15 @@ fn main() {
                 let app_dir = String::from("temp/demo");
                 clone_template(&template_name, &app_dir, &settings);
             }
+            "sync" => {
+                sync_template_variables();
+            }
             "help" => {
                 display_help();
             }
             _ => {
-                println!("Command not found: {}", command);
+                let hint = format!("Command not found: {}", command).as_str().red();
+                println!("{}", hint);
             }
         }
     } else {
@@ -62,6 +66,11 @@ fn clone_template(template_name: &String, app_dir: &String, settings: &Settings)
     }
 }
 
+fn sync_template_variables() {
+    let dest_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+    prompt_input_variables(&settings, &dest_dir);
+}
+
 fn display_help() {
     println!("Display help")
 }
@@ -86,7 +95,6 @@ fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
 
 
 fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
-    println!("begin to replace");
     let template_json_file = format!("{}/template.json", app_dest_dir);
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
