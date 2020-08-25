@@ -46,3 +46,26 @@ fn clone_template(template_name: &String, settings: &Settings) {
 fn display_help() {
     println!("Display help")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_list_templates() {
+        let settings = Settings::load();
+        list_templates(&settings);
+    }
+
+    #[test]
+    fn test_clone_template() {
+        let settings = Settings::load();
+        let template_name = String::from("spring-boot-java");
+        clone_template(&template_name, &settings);
+    }
+
+    #[test]
+    fn test_display_help() {
+        display_help();
+    }
+}
