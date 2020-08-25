@@ -58,7 +58,7 @@ impl Settings {
 }
 
 impl AppTemplate {
-    fn new(template_json_file: &String) -> AppTemplate {
+    pub fn new(template_json_file: &String) -> AppTemplate {
         let setting_json = fs::read_to_string(template_json_file)
             .expect("Failed to read template.json");
         serde_json::from_str(setting_json.as_str()).unwrap()
