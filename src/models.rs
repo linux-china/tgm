@@ -47,3 +47,23 @@ impl Settings {
         return None;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_load() {
+        let settings = Settings::load();
+        println!("{:?}", settings);
+        assert!(!settings.templates.is_empty());
+    }
+
+    #[test]
+    fn test_find_template() {
+        let settings = Settings::load();
+        let template_name = String::from("spring-boot-java");
+        let template = settings.find_template(&template_name).unwrap();
+        println!("template description: {}", template.description);
+    }
+}
