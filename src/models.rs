@@ -37,4 +37,13 @@ impl Settings {
             Settings { templates: vec![], variables: vec![] }
         }
     }
+
+    pub fn find_template(&self, template_name: &String) -> Option<&Template> {
+        for template in self.templates.iter() {
+            if template_name == &template.name {
+                return Some(template);
+            }
+        }
+        return None;
+    }
 }
