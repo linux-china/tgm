@@ -1,0 +1,26 @@
+{
+  "templates": [
+    {
+      "name": "spring-boot-java",
+      "repository": "https://github.com/linux-china/spring-boot-java-template",
+      "description": "Spring Boot App template with Java"
+    },
+    {
+      "name": "spring-boot-kotlin",
+      "repository": "https://github.com/linux-china/spring-boot-kotlin-template",
+      "description": "Spring Boot App template with Kotlin"
+    }
+  ],
+  "variables": [
+    {
+      "name": "email",
+      "value": "libing.chen@gmail.com",
+      "description": "author's Email address"
+    },
+    {
+      "name": "author",
+      "value": "linux_china",
+      "description": "author's name"
+    }
+  ]
+}
