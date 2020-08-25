@@ -2,12 +2,12 @@
   "templates": [
     {
       "name": "spring-boot-java",
-      "repository": "https://github.com/linux-china/spring-boot-java-template",
+      "repository": "https://github.com/linux-china/spring-boot-java-template.git",
       "description": "Spring Boot App template with Java"
     },
     {
       "name": "spring-boot-kotlin",
-      "repository": "https://github.com/linux-china/spring-boot-kotlin-template",
+      "repository": "https://github.com/linux-china/spring-boot-kotlin-template.git",
       "description": "Spring Boot App template with Kotlin"
     }
   ],
