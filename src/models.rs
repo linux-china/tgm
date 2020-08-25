@@ -23,6 +23,16 @@ pub struct Variable {
     pub description: String,
 }
 
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AppTemplate {
+    pub name: String,
+    pub repository: String,
+    pub description: String,
+    pub auto_run: String,
+    pub variables: Vec<Variable>,
+}
+
 impl Settings {
     pub fn load() -> Settings {
         let home = env::var("HOME").unwrap();
@@ -47,6 +57,14 @@ impl Settings {
     }
 }
 
+impl AppTemplate {
+    fn new(template_json_file: &String) -> AppTemplate {
+        let setting_json = fs::read_to_string(template_json_file)
+            .expect("Failed to read template.json");
+        serde_json::from_str(setting_json.as_str()).unwrap()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -64,5 +82,12 @@ mod tests {
         let template_name = String::from("spring-boot-java");
         let template = settings.find_template(&template_name).unwrap();
         println!("template description: {}", template.description);
+    }
+
+    #[test]
+    fn test_app_template() {
+        let app_template_file = String::from("temp/demo/template.json");
+        let app_template = AppTemplate::new(&app_template_file);
+        println!("{:?}", app_template);
     }
 }
