@@ -1,8 +1,7 @@
 mod models;
 
-use std::fs;
 use std::env;
-use models::{Settings, Template, Variable};
+use models::Settings;
 
 fn main() {
     let sub_command = env::args().nth(1);
