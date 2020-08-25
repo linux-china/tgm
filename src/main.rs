@@ -1,10 +1,12 @@
 mod models;
 
-use std::env;
+use std::{env, fs};
 use models::Settings;
 use std::process::Command;
+use crate::models::AppTemplate;
+use std::fs::File;
+use std::collections::HashMap;
 use std::path::Path;
-
 
 fn main() {
     let sub_command = env::args().nth(1);
@@ -42,13 +44,17 @@ fn clone_template(template_name: &String, app_dir: &String, settings: &Settings)
     let current_dir = std::env::current_dir().unwrap();
     let dest_dir = format!("{}/{}", current_dir.to_str().unwrap(), app_dir);
     if let Some(template) = settings.find_template(&template_name) {
-        println!("Beginning to clone {}", template.name);
-        let args = vec!["clone", "https://github.com/linux-china/spring-boot-java-template.git", dest_dir.as_str()];
-        if let Ok(stdout_text) = execute_command("git", &args) {
-            println!("{}", stdout_text);
-            // change work directory
-            //std::env::set_current_dir(Path::new(&dest_dir));
+        let dest_path = Path::new(&dest_dir);
+        if !dest_path.exists() {
+            println!("Beginning to clone {}", template.name);
+            let args = vec!["clone", "https://github.com/linux-china/spring-boot-java-template.git", dest_dir.as_str()];
+            if let Ok(stdout_text) = execute_command("git", &args) {
+                println!("{}", stdout_text);
+            }
         }
+        // change work directory
+        std::env::set_current_dir(Path::new(&dest_dir));
+        prompt_input_variables(&settings, &dest_dir);
     } else {
         println!("Template not found: {}", template_name);
     }
@@ -76,6 +82,25 @@ fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
     }
 }
 
+
+fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
+    println!("begin to replace");
+    let template_json_file = format!("{}/template.json", app_dest_dir);
+    let app_template = AppTemplate::new(&template_json_file);
+    let mut variables = HashMap::<String, String>::new();
+    for v in app_template.variables.iter() {
+        println!("{}>", v.name);
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).unwrap();
+        variables.insert(format!("@{}@", v.name), String::from(input.trim()));
+    }
+    println!("{:?}", variables);
+}
+
+fn is_legal(file: File) -> bool {
+    return true;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -92,6 +117,12 @@ mod tests {
         let template_name = String::from("spring-boot-java");
         let app_dir = String::from("temp/demo");
         clone_template(&template_name, &app_dir, &settings);
+    }
+
+    #[test]
+    fn test_variables_replace() {
+        let settings = Settings::load();
+        let app_dest_dir = String::from("temp/demo");
     }
 
     #[test]
