@@ -152,7 +152,7 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
     if !app_template.variables.is_empty() {
         println!("Please complete template variables.");
         for v in app_template.variables.iter() {
-            print!("{}({}){}", v.name.as_str().green(), v.description, ">".green());
+            print!("{}({}){}", v.name.as_str().green(), v.description, ">".blue());
             std::io::stdout().flush().unwrap();
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
