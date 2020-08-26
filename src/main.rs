@@ -27,6 +27,14 @@ fn main() {
                     println!("{}", "Please specify template name and git url!".red());
                 }
             }
+            "remove" => {
+                let name_arg = env::args().nth(2);
+                if let Some(name) = name_arg {
+                    delete_template(&name);
+                } else {
+                    println!("{}", "Please specify template name!".red());
+                }
+            }
             "clone" => {
                 let template_name = String::from("spring-boot-java");
                 let app_dir_arg = env::args().nth(2);
@@ -56,6 +64,11 @@ fn main() {
 fn add_template(name: &String, url: &String) {
     let mut settings = Settings::load();
     settings.add_template(name.clone(), url.clone());
+}
+
+fn delete_template(name: &String) {
+    let mut settings = Settings::load();
+    settings.delete_template(name);
 }
 
 fn list_templates(settings: &Settings) {
@@ -166,6 +179,12 @@ mod tests {
         let name = String::from("demo");
         let url = String::from("git://xxx");
         add_template(&name, &url);
+    }
+
+    #[test]
+    fn test_delete_template() {
+        let name = String::from("demo");
+        delete_template(&name);
     }
 
     #[test]
