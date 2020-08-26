@@ -52,7 +52,7 @@ In the resource files, such as pom.xml, use template variable as following:
 $ cargo install tgm
 $ tgm add linux-china/spring-boot-java-template
 $ tgm list
-$ tgm clone spring-boot-java spring-app-demo
+$ tgm create spring-boot-java spring-app-demo
 ```
 
 
