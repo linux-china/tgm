@@ -36,10 +36,10 @@ fn main() {
                 }
             }
             "create" => {
-                let template_name = String::from("spring-boot-java");
-                let app_dir_arg = env::args().nth(2);
+                let template_name = env::args().nth(2);
+                let app_dir_arg = env::args().nth(3);
                 if let Some(app_dir) = app_dir_arg {
-                    create_app(&template_name, &app_dir, &settings);
+                    create_app(&template_name.unwrap(), &app_dir, &settings);
                 } else {
                     println!("{}", "Please specify the destination directory!".red());
                 }
@@ -86,15 +86,20 @@ fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
             println!("Beginning to clone {}", template.name);
             let args = vec![
                 "clone",
-                "https://github.com/linux-china/spring-boot-java-template.git",
-                dest_dir.as_str(),
+                template.repository.as_str(),
+                app_dir.as_str(),
             ];
-            if let Ok(stdout_text) = execute_command("git", &args) {
-                println!("{}", stdout_text);
+            match execute_command("git", &args) {
+                Ok(stdout_text) => {
+                    println!("{}", stdout_text);
+                    std::env::set_current_dir(Path::new(&dest_dir)).unwrap();
+                }
+                Err(e) => {
+                    println!("{}", e.as_str().red());
+                }
             }
         }
         // change work directory
-        std::env::set_current_dir(Path::new(&dest_dir)).unwrap();
         prompt_input_variables(&settings, &dest_dir);
     } else {
         println!("Template not found: {}", template_name);
