@@ -2,6 +2,9 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
 use std::path::Path;
+use std::fs::File;
+use std::io::Write;
+use std::thread::sleep;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
@@ -50,6 +53,19 @@ impl Settings {
         }
     }
 
+    pub fn fresh_settings(settings: &Settings) {
+        let home = env::var("HOME").unwrap();
+        let tgm_home = format!("{}/.tgm", home);
+        let tgm_path = Path::new(&tgm_home);
+        if !tgm_path.exists() {
+            std::fs::create_dir_all(tgm_path);
+        }
+        let setting_json_path = home + "/.tgm/settings.json";
+        let mut file = File::create(Path::new(&setting_json_path)).unwrap();
+        let json_text = serde_json::to_string_pretty(&settings).unwrap();
+        file.write_all(json_text.as_bytes()).unwrap();
+    }
+
     pub fn find_template(&self, template_name: &String) -> Option<&Template> {
         for template in self.templates.iter() {
             if template_name == &template.name {
@@ -57,6 +73,15 @@ impl Settings {
             }
         }
         return None;
+    }
+
+    pub fn add_template(&mut self, name: String, url: String) {
+        if self.find_template(&name).is_none() {
+            self.templates.push(Template { name, repository: url, description: String::from("desc") });
+            Settings::fresh_settings(self);
+        } else {
+            println!("{} template already exits!", name);
+        }
     }
 }
 
