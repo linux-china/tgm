@@ -18,7 +18,7 @@ Please add template.json file in your template repository, code as following：
   "name": "spring-boot-java",
   "repository": "https://github.com/linux-china/spring-boot-java-template",
   "description": "Spring Boot App Java",
-  "auto_run": "mvn -DskipTests compile",
+  "post_create": "mvn -DskipTests compile",
   "variables": [
     {
       "name": "groupId",
