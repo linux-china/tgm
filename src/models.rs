@@ -30,7 +30,7 @@ pub struct AppTemplate {
     pub name: String,
     pub repository: String,
     pub description: String,
-    pub auto_run: String,
+    pub post_create: String,
     pub variables: Vec<Variable>,
     pub files: Vec<String>,
 }
@@ -120,7 +120,7 @@ impl Default for AppTemplate {
             repository: String::from("not available"),
             variables: vec![],
             files: vec![],
-            auto_run: String::from(""),
+            post_create: String::from(""),
         }
     }
 }

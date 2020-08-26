@@ -166,12 +166,13 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
         }
     }
     std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
-    // remove origin
-    execute_command("git", &["remote", "remove", "origin"]).unwrap();
-    // auto run
-    if !app_template.auto_run.is_empty() {
-        let parts: Vec<&str> = app_template.auto_run.split(' ').collect();
-        println!("Begin to execute auto run: {}", app_template.auto_run);
+    // re-init
+    execute_command("rm", &["-rf", ".git"]).unwrap();
+    execute_command("git", &["init"]).unwrap();
+    // post create
+    if !app_template.post_create.is_empty() {
+        let parts: Vec<&str> = app_template.post_create.split(' ').collect();
+        println!("Begin to execute post_create: {}", app_template.post_create);
         let args: Vec<&str> = parts[1..].to_vec();
         match execute_command(parts[0], &args) {
             Ok(stdout_text) => {
