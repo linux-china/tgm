@@ -114,6 +114,8 @@ fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
                     println!("{}", e.as_str().red());
                 }
             }
+            // remove origin
+            execute_command("git", &vec!["remote", "remove", "origin"]).unwrap();
         }
         // template variables input
         prompt_input_variables(&settings, &dest_dir);
