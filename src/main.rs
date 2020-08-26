@@ -128,7 +128,7 @@ fn create_app(template_name: &str, app_dir: &str, settings: &Settings) {
 
 fn display_help() {
     println!("tgm-{}: https://github.com/linux-china/tgm", VERSION);
-    println!("sub commands: list, clone, sync")
+    println!("sub commands: list, create, add, remove etc")
 }
 
 fn execute_command(command: &str, args: &[&str]) -> Result<String, String> {
