@@ -121,21 +121,21 @@ mod tests {
     #[test]
     fn test_find_template() {
         let settings = Settings::load();
-        let template_name = String::from("spring-boot-java");
+        let template_name = "spring-boot-java";
         let template = settings.find_template(&template_name).unwrap();
         println!("template description: {}", template.description);
     }
 
     #[test]
     fn test_app_template() {
-        let app_template_file = String::from("temp/demo/template.json");
+        let app_template_file = "temp/demo/template.json";
         let app_template = AppTemplate::new(&app_template_file);
         println!("{:?}", app_template);
     }
 
     #[test]
     fn test_fetch_remote_template() -> reqwest::Result<()> {
-        let url = String::from("https://raw.githubusercontent.com/linux-china/spring-boot-java-template/master/template.json");
+        let url = "https://raw.githubusercontent.com/linux-china/spring-boot-java-template/master/template.json";
         let app_template = AppTemplate::fetch_remote(&url).unwrap();
         println!("{:?}", app_template);
         Ok(())

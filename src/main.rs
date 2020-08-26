@@ -22,7 +22,7 @@ fn main() {
                 let name = env::args().nth(2).unwrap();
                 let url_arg = env::args().nth(3);
                 if let Some(url) = url_arg {
-                    add_template(&name, &url, &String::from("Desc absent!"));
+                    add_template(&name, &url, "Desc absent!");
                 } else {
                     let mut url = name.clone();
                     if !(url.starts_with("http://") || url.starts_with("https://")) {
@@ -200,9 +200,9 @@ mod tests {
     #[test]
     fn test_create_app() {
         let settings = Settings::load();
-        let template_name = String::from("spring-boot-java");
-        let app_dir = String::from("temp/demo");
-        create_app(&template_name, &app_dir, &settings);
+        let template_name = "spring-boot-java";
+        let app_dir = "temp/demo";
+        create_app(template_name, app_dir, &settings);
     }
 
     #[test]
