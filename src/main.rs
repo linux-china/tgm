@@ -19,12 +19,24 @@ fn main() {
                 list_templates(&settings);
             }
             "add" => {
-                let name_arg = env::args().nth(2);
+                let name = env::args().nth(2).unwrap();
                 let url_arg = env::args().nth(3);
                 if let Some(url) = url_arg {
-                    add_template(&name_arg.unwrap(), &url);
+                    add_template(&name, &url, &String::from("Desc absent!"));
                 } else {
-                    println!("{}", "Please specify template name and git url!".red());
+                    let mut url = name.clone();
+                    if !(url.starts_with("http://") || url.starts_with("https://")) {
+                        // github template repository
+                        url = format!("https://raw.githubusercontent.com/{}/master/template.json", name);
+                    }
+                    match AppTemplate::fetch_remote(&url) {
+                        Ok(app_template) => {
+                            add_template(&app_template.name, &app_template.repository, &app_template.description);
+                        }
+                        Err(_e) => {
+                            println!("{}", format!("Failed to load template from {}", url).as_str().red());
+                        }
+                    }
                 }
             }
             "remove" => {
@@ -62,9 +74,9 @@ fn main() {
     }
 }
 
-fn add_template(name: &String, url: &String) {
+fn add_template(name: &String, url: &String, description: &String) {
     let mut settings = Settings::load();
-    settings.add_template(name.clone(), url.clone());
+    settings.add_template(name.clone(), url.clone(), description.clone());
 }
 
 fn delete_template(name: &String) {
@@ -196,7 +208,8 @@ mod tests {
     fn test_add_template() {
         let name = String::from("demo");
         let url = String::from("git://xxx");
-        add_template(&name, &url);
+        let description = String::from("no description");
+        add_template(&name, &url, &description);
     }
 
     #[test]
