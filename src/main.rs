@@ -10,6 +10,8 @@ use std::path::Path;
 use std::process::Command;
 use std::{env, fs};
 
+const VERSION: &str = "0.1.2";
+
 fn main() {
     let sub_command = env::args().nth(1);
     let settings = Settings::load();
@@ -86,7 +88,7 @@ fn delete_template(name: &str) {
 
 fn list_templates(settings: &Settings) {
     if settings.templates.is_empty() {
-        println!("No template available! Please use '{}' to add new template.", "tgm add name repo_url".blue());
+        println!("No template available! Please use '{}' to add new template.", "tgm add name repo_url".green());
     } else {
         for template in settings.templates.iter() {
             println!("{} - {} : {}", template.name.as_str().blue(), template.repository, template.description);
@@ -125,7 +127,7 @@ fn create_app(template_name: &str, app_dir: &str, settings: &Settings) {
 }
 
 fn display_help() {
-    println!("tgm: https://github.com/linux-china/tgm");
+    println!("tgm-{}: https://github.com/linux-china/tgm", VERSION);
     println!("sub commands: list, clone, sync")
 }
 
