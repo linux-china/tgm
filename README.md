@@ -40,10 +40,11 @@ In the resource files, such as pom.xml, use template variable as following:
 </project>
 ```
 
-# Usage
+# Install & Usage
 
 ```
-$ tgm add linux-china/spring-boot-kotlin-template
+$ cargo install tgm
+$ tgm add linux-china/spring-boot-java-template
 $ tgm list
 $ tgm clone spring-boot-java spring-app-demo
 ```
