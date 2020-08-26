@@ -4,7 +4,6 @@ use std::fs;
 use std::path::Path;
 use std::fs::File;
 use std::io::Write;
-use std::thread::sleep;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
@@ -58,7 +57,7 @@ impl Settings {
         let tgm_home = format!("{}/.tgm", home);
         let tgm_path = Path::new(&tgm_home);
         if !tgm_path.exists() {
-            std::fs::create_dir_all(tgm_path);
+            std::fs::create_dir_all(tgm_path).unwrap();
         }
         let setting_json_path = home + "/.tgm/settings.json";
         let mut file = File::create(Path::new(&setting_json_path)).unwrap();

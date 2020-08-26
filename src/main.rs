@@ -94,7 +94,7 @@ fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
             }
         }
         // change work directory
-        std::env::set_current_dir(Path::new(&dest_dir));
+        std::env::set_current_dir(Path::new(&dest_dir)).unwrap();
         prompt_input_variables(&settings, &dest_dir);
     } else {
         println!("Template not found: {}", template_name);
@@ -122,7 +122,7 @@ fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
     }
 }
 
-fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
+fn prompt_input_variables(_settings: &Settings, app_dest_dir: &String) {
     let template_json_file = format!("{}/template.json", app_dest_dir);
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
@@ -166,12 +166,6 @@ mod tests {
         let template_name = String::from("spring-boot-java");
         let app_dir = String::from("temp/demo");
         create_app(&template_name, &app_dir, &settings);
-    }
-
-    #[test]
-    fn test_variables_replace() {
-        let settings = Settings::load();
-        let app_dest_dir = String::from("temp/demo");
     }
 
     #[test]
