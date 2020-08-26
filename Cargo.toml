@@ -1,8 +1,16 @@
 [package]
 name = "tgm"
 version = "0.1.0"
-authors = ["linux_china <libing.chen@gmail.com>"]
 edition = "2018"
+authors = ["linux_china <libing.chen@gmail.com>"]
+description = "CLI to manage template repositories"
+keywords = ["template", "generator"]
+categories = ["command-line-utilities"]
+documentation = "https://github.com/linux-china/tgm"
+readme = "README.md"
+homepage = "https://github.com/linux-china/tgm"
+repository = "https://github.com/linux-china/tgm"
+license = "Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
