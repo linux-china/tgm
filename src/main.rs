@@ -96,7 +96,8 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
     for v in app_template.variables.iter() {
-        println!("{}>", v.name.as_str().green());
+        print!("{}>", v.name.as_str().green());
+        std::io::stdout().flush().unwrap();
         let mut input = String::new();
         std::io::stdin().read_line(&mut input).unwrap();
         variables.insert(format!("@{}@", v.name), String::from(input.trim()));
