@@ -18,11 +18,23 @@ fn main() {
             "list" => {
                 list_templates(&settings);
             }
+            "add" => {
+                let name_arg = env::args().nth(2);
+                let url_arg = env::args().nth(3);
+                if let Some(url) = url_arg {
+                    add_template(&name_arg.unwrap(), &url);
+                } else {
+                    println!("{}", "Please specify template name and git url!".red());
+                }
+            }
             "clone" => {
                 let template_name = String::from("spring-boot-java");
-                //env::args().nth(2)
-                let app_dir = String::from("temp/demo");
-                clone_template(&template_name, &app_dir, &settings);
+                let app_dir_arg = env::args().nth(2);
+                if let Some(app_dir) = app_dir_arg {
+                    clone_template(&template_name, &app_dir, &settings);
+                } else {
+                    println!("{}", "Please specify the destination directory!".red());
+                }
             }
             "sync" => {
                 let dest_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
@@ -41,9 +53,14 @@ fn main() {
     }
 }
 
+fn add_template(name: &String, url: &String) {
+    let mut settings = Settings::load();
+    settings.add_template(name.clone(), url.clone());
+}
+
 fn list_templates(settings: &Settings) {
     for template in settings.templates.iter() {
-        println!("{} - {}", template.name.as_str().blue(), template.description);
+        println!("{} - {} : {}", template.name.as_str().blue(), template.repository, template.description);
     }
 }
 
@@ -142,6 +159,13 @@ mod tests {
     fn test_variables_replace() {
         let settings = Settings::load();
         let app_dest_dir = String::from("temp/demo");
+    }
+
+    #[test]
+    fn test_add_template() {
+        let name = String::from("demo");
+        let url = String::from("git://xxx");
+        add_template(&name, &url);
     }
 
     #[test]
