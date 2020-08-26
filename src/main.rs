@@ -25,7 +25,8 @@ fn main() {
                 clone_template(&template_name, &app_dir, &settings);
             }
             "sync" => {
-                sync_template_variables();
+                let dest_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+                prompt_input_variables(&settings, &dest_dir);
             }
             "help" => {
                 display_help();
@@ -66,11 +67,6 @@ fn clone_template(template_name: &String, app_dir: &String, settings: &Settings)
     }
 }
 
-fn sync_template_variables() {
-    let dest_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
-    prompt_input_variables(&settings, &dest_dir);
-}
-
 fn display_help() {
     println!("Display help")
 }
@@ -92,7 +88,6 @@ fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
         Err(e) => Err(e.to_string())
     }
 }
-
 
 fn prompt_input_variables(settings: &Settings, app_dest_dir: &String) {
     let template_json_file = format!("{}/template.json", app_dest_dir);
