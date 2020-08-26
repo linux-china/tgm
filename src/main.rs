@@ -74,12 +74,12 @@ fn main() {
     }
 }
 
-fn add_template(name: &String, url: &String, description: &String) {
+fn add_template(name: &str, url: &str, description: &str) {
     let mut settings = Settings::load();
-    settings.add_template(name.clone(), url.clone(), description.clone());
+    settings.add_template(name.into(), url.into(), description.into());
 }
 
-fn delete_template(name: &String) {
+fn delete_template(name: &str) {
     let mut settings = Settings::load();
     settings.delete_template(name);
 }
@@ -94,7 +94,7 @@ fn list_templates(settings: &Settings) {
     }
 }
 
-fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
+fn create_app(template_name: &str, app_dir: &str, settings: &Settings) {
     let current_dir = std::env::current_dir().unwrap();
     let dest_dir = format!("{}/{}", current_dir.to_str().unwrap(), app_dir);
     if let Some(template) = settings.find_template(&template_name) {
@@ -104,7 +104,7 @@ fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
             let args = vec![
                 "clone",
                 template.repository.as_str(),
-                app_dir.as_str(),
+                app_dir,
             ];
             match execute_command("git", &args) {
                 Ok(stdout_text) => {
@@ -115,7 +115,7 @@ fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
                 }
             }
             // remove origin
-            execute_command("git", &vec!["remote", "remove", "origin"]).unwrap();
+            execute_command("git", &["remote", "remove", "origin"]).unwrap();
         }
         // template variables input
         prompt_input_variables(&settings, &dest_dir);
@@ -129,13 +129,13 @@ fn display_help() {
     println!("sub commands: list, clone, sync")
 }
 
-fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
-    let result = Command::new(command).args(args.as_slice()).output();
+fn execute_command(command: &str, args: &[&str]) -> Result<String, String> {
+    let result = Command::new(command).args(args).output();
     match result {
         Ok(output) => {
             if output.status.success() {
                 std::str::from_utf8(output.stdout.as_slice())
-                    .map(|x| String::from(x))
+                    .map(String::from)
                     .map_err(|e| e.to_string())
             } else {
                 Ok(String::from("good"))
@@ -145,7 +145,7 @@ fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
     }
 }
 
-fn prompt_input_variables(_settings: &Settings, app_dest_dir: &String) {
+fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
     let template_json_file = format!("{}/template.json", app_dest_dir);
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
@@ -163,7 +163,7 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &String) {
     std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
     // auto run
     if !app_template.auto_run.is_empty() {
-        let parts: Vec<&str> = app_template.auto_run.split(" ").collect();
+        let parts: Vec<&str> = app_template.auto_run.split(' ').collect();
         println!("Begin to execute auto run: {}", app_template.auto_run);
         let args: Vec<&str> = parts[1..].to_vec();
         match execute_command(parts[0], &args) {
@@ -177,10 +177,9 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &String) {
     }
 }
 
-fn replace_variables(resource_file: &String, variables: &HashMap<String, String>) {
+fn replace_variables(resource_file: &str, variables: &HashMap<String, String>) {
     let path = Path::new(resource_file);
-    let content = fs::read_to_string(path).unwrap();
-    let mut replaced_text = content.clone();
+    let mut replaced_text = fs::read_to_string(path).unwrap();
     for (k, v) in variables.iter() {
         replaced_text = replaced_text.replacen(k.as_str(), v.as_str(), 1024);
     }
@@ -208,16 +207,16 @@ mod tests {
 
     #[test]
     fn test_add_template() {
-        let name = String::from("demo");
-        let url = String::from("git://xxx");
-        let description = String::from("no description");
-        add_template(&name, &url, &description);
+        let name = "demo";
+        let url = "git://xxx";
+        let description = "no description";
+        add_template(name, url, description);
     }
 
     #[test]
     fn test_delete_template() {
-        let name = String::from("demo");
-        delete_template(&name);
+        let name = "demo";
+        delete_template(name);
     }
 
     #[test]

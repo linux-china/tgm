@@ -67,7 +67,7 @@ impl Settings {
 
     pub fn find_template(&self, template_name: &str) -> Option<&Template> {
         for template in self.templates.iter() {
-            if template_name == &template.name {
+            if *template_name == template.name {
                 return Some(template);
             }
         }
@@ -84,7 +84,7 @@ impl Settings {
         }
     }
 
-    pub fn delete_template(&mut self, name: &String) {
+    pub fn delete_template(&mut self, name: &str) {
         if self.find_template(name).is_some() {
             self.templates.retain(|t| t.name != *name);
             self.fresh_settings();
