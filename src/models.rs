@@ -53,7 +53,7 @@ impl Settings {
         }
     }
 
-    pub fn fresh_settings(settings: &Settings) {
+    pub fn fresh_settings(&self) {
         let home = env::var("HOME").unwrap();
         let tgm_home = format!("{}/.tgm", home);
         let tgm_path = Path::new(&tgm_home);
@@ -62,7 +62,7 @@ impl Settings {
         }
         let setting_json_path = home + "/.tgm/settings.json";
         let mut file = File::create(Path::new(&setting_json_path)).unwrap();
-        let json_text = serde_json::to_string_pretty(&settings).unwrap();
+        let json_text = serde_json::to_string_pretty(self).unwrap();
         file.write_all(json_text.as_bytes()).unwrap();
     }
 
@@ -77,10 +77,21 @@ impl Settings {
 
     pub fn add_template(&mut self, name: String, url: String) {
         if self.find_template(&name).is_none() {
-            self.templates.push(Template { name, repository: url, description: String::from("desc") });
-            Settings::fresh_settings(self);
+            self.templates.push(Template { name: name.clone(), repository: url, description: String::from("desc") });
+            self.fresh_settings();
+            println!("{} template added!", name);
         } else {
             println!("{} template already exits!", name);
+        }
+    }
+
+    pub fn delete_template(&mut self, name: &String) {
+        if self.find_template(name).is_some() {
+            self.templates.retain(|t| t.name != *name);
+            self.fresh_settings();
+            println!("{} template added!", name);
+        } else {
+            println!("{} template not found!", name);
         }
     }
 }
