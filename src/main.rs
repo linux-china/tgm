@@ -72,8 +72,12 @@ fn delete_template(name: &String) {
 }
 
 fn list_templates(settings: &Settings) {
-    for template in settings.templates.iter() {
-        println!("{} - {} : {}", template.name.as_str().blue(), template.repository, template.description);
+    if settings.templates.is_empty() {
+        println!("No template available! Please use '{}' to add new template.", "tgm add name repo_url".blue());
+    } else {
+        for template in settings.templates.iter() {
+            println!("{} - {} : {}", template.name.as_str().blue(), template.repository, template.description);
+        }
     }
 }
 
