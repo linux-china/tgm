@@ -36,7 +36,7 @@ fn main() {
                             add_template(&app_template.name, &app_template.repository, &app_template.description);
                         }
                         Err(_e) => {
-                            println!("{}", format!("Failed to load template from {}", url).as_str().red());
+                            println!("{}", format!("Failed to load template from {}, please check the json data!", url).as_str().red());
                         }
                     }
                 }
