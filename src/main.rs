@@ -10,7 +10,7 @@ use std::path::Path;
 use std::process::Command;
 use std::{env, fs};
 
-const VERSION: &str = "0.1.2";
+const VERSION: &str = "0.1.3";
 
 fn main() {
     let sub_command = env::args().nth(1);
