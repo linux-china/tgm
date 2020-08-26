@@ -4,6 +4,12 @@ Template Generator Management
 
 Generate project structure from git template repository.
 
+Why tgm?
+
+* Manage all template repositories
+* Create app from template quickly
+* Prompt for template variables
+
 # Template repository
 Please add template.json file in your template repository, code as following：
 
