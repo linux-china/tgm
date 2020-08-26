@@ -43,7 +43,7 @@ fn main() {
 
 fn list_templates(settings: &Settings) {
     for template in settings.templates.iter() {
-        println!("{} - {}", template.name, template.description);
+        println!("{} - {}", template.name.as_str().blue(), template.description);
     }
 }
 
@@ -72,7 +72,8 @@ fn clone_template(template_name: &String, app_dir: &String, settings: &Settings)
 }
 
 fn display_help() {
-    println!("Display help")
+    println!("tgm: https://github.com/linux-china/tgm");
+    println!("sub commands: list, clone, sync")
 }
 
 fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
