@@ -74,9 +74,9 @@ impl Settings {
         return None;
     }
 
-    pub fn add_template(&mut self, name: String, url: String) {
+    pub fn add_template(&mut self, name: String, url: String, description: String) {
         if self.find_template(&name).is_none() {
-            self.templates.push(Template { name: name.clone(), repository: url, description: String::from("desc") });
+            self.templates.push(Template { name: name.clone(), repository: url, description });
             self.fresh_settings();
             println!("{} template added!", name);
         } else {
@@ -100,6 +100,10 @@ impl AppTemplate {
         let setting_json =
             fs::read_to_string(template_json_file).expect("Failed to read template.json");
         serde_json::from_str(setting_json.as_str()).unwrap()
+    }
+
+    pub fn fetch_remote(url: &String) -> reqwest::Result<AppTemplate> {
+        reqwest::blocking::get(url)?.json::<AppTemplate>()
     }
 }
 
@@ -127,5 +131,13 @@ mod tests {
         let app_template_file = String::from("temp/demo/template.json");
         let app_template = AppTemplate::new(&app_template_file);
         println!("{:?}", app_template);
+    }
+
+    #[test]
+    fn test_fetch_remote_template() -> reqwest::Result<()> {
+        let url = String::from("https://raw.githubusercontent.com/linux-china/spring-boot-java-template/master/template.json");
+        let app_template = AppTemplate::fetch_remote(&url).unwrap();
+        println!("{:?}", app_template);
+        Ok(())
     }
 }
