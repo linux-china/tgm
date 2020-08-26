@@ -21,7 +21,7 @@ pub struct Template {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Variable {
     pub name: String,
-    pub value: String,
+    pub value: Option<String>,
     pub description: String,
 }
 
@@ -30,7 +30,7 @@ pub struct AppTemplate {
     pub name: String,
     pub repository: String,
     pub description: String,
-    pub post_create: String,
+    pub post_create: Option<String>,
     pub variables: Vec<Variable>,
     pub files: Vec<String>,
 }
@@ -120,7 +120,7 @@ impl Default for AppTemplate {
             repository: String::from("not available"),
             variables: vec![],
             files: vec![],
-            post_create: String::from(""),
+            post_create: Some(String::from("Desc absent")),
         }
     }
 }
