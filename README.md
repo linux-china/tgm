@@ -43,18 +43,19 @@ In the resource files, such as pom.xml, use template variable as following:
 # Usage
 
 ```
-$ tgm add spring-boot-java https://github.com/linux-china/spring-boot-java-template.git
+$ tgm add linux-china/spring-boot-kotlin-template
 $ tgm list
-$ tgm clone spring-boot-java  spring-app-demo
+$ tgm clone spring-boot-java spring-app-demo
 ```
 
 
 # tgm commands:
 
 * list: list all templates
-* add: add new template
+* add: add new template from github template repository or manual
 
 ```
+$ tgm add linux-china/spring-boot-kotlin-template
 $ tgm add spring-boot-java https://github.com/linux-china/spring-boot-java-template.git
 ```
 
