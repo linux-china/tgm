@@ -1,5 +1,6 @@
 Template Generator Management
 =============================
+![Build Status](https://img.shields.io/github/workflow/status/linux-china/tgm/Rust)
 
 Generate project structure from git template repository.
 
