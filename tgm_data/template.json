@@ -2,13 +2,7 @@
   "name": "spring-boot-java",
   "repository": "https://github.com/linux-china/spring-boot-java-template",
   "description": "Spring Boot App Java",
-  "requirements": [
-    {
-      "description": "Apache Maven",
-      "checker": "mvn --version"
-    }
-  ],
-  "auto_run": "mvn -DskipTests compile",
+  "post_create": "mvn -DskipTests compile",
   "variables": [
     {
       "name": "groupId",
