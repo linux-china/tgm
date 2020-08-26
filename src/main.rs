@@ -35,11 +35,11 @@ fn main() {
                     println!("{}", "Please specify template name!".red());
                 }
             }
-            "clone" => {
+            "create" => {
                 let template_name = String::from("spring-boot-java");
                 let app_dir_arg = env::args().nth(2);
                 if let Some(app_dir) = app_dir_arg {
-                    clone_template(&template_name, &app_dir, &settings);
+                    create_app(&template_name, &app_dir, &settings);
                 } else {
                     println!("{}", "Please specify the destination directory!".red());
                 }
@@ -57,7 +57,7 @@ fn main() {
             }
         }
     } else {
-        println!("Please use sub commands: list, clone, help etc");
+        println!("Please use sub commands: list, create, add, remove, help etc");
     }
 }
 
@@ -77,7 +77,7 @@ fn list_templates(settings: &Settings) {
     }
 }
 
-fn clone_template(template_name: &String, app_dir: &String, settings: &Settings) {
+fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
     let current_dir = std::env::current_dir().unwrap();
     let dest_dir = format!("{}/{}", current_dir.to_str().unwrap(), app_dir);
     if let Some(template) = settings.find_template(&template_name) {
@@ -161,11 +161,11 @@ mod tests {
     }
 
     #[test]
-    fn test_clone_template() {
+    fn test_create_app() {
         let settings = Settings::load();
         let template_name = String::from("spring-boot-java");
         let app_dir = String::from("temp/demo");
-        clone_template(&template_name, &app_dir, &settings);
+        create_app(&template_name, &app_dir, &settings);
     }
 
     #[test]
