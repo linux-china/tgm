@@ -114,8 +114,6 @@ fn create_app(template_name: &str, app_dir: &str, settings: &Settings) {
                     println!("{}", e.as_str().red());
                 }
             }
-            // remove origin
-            execute_command("git", &["remote", "remove", "origin"]).unwrap();
         }
         // template variables input
         prompt_input_variables(&settings, &dest_dir);
@@ -161,6 +159,8 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
         replace_variables(&resource_file, &variables);
     }
     std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
+    // remove origin
+    execute_command("git", &["remote", "remove", "origin"]).unwrap();
     // auto run
     if !app_template.auto_run.is_empty() {
         let parts: Vec<&str> = app_template.auto_run.split(' ').collect();
