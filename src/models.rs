@@ -97,13 +97,31 @@ impl Settings {
 
 impl AppTemplate {
     pub fn new(template_json_file: &str) -> AppTemplate {
-        let setting_json =
-            fs::read_to_string(template_json_file).expect("Failed to read template.json");
-        serde_json::from_str(setting_json.as_str()).unwrap()
+        let path = Path::new(template_json_file);
+        if path.exists() {
+            let setting_json =
+                fs::read_to_string(template_json_file).expect("Failed to read template.json");
+            serde_json::from_str(setting_json.as_str()).unwrap()
+        } else {
+            AppTemplate::default()
+        }
     }
 
     pub fn fetch_remote(url: &str) -> reqwest::Result<AppTemplate> {
         reqwest::blocking::get(url)?.json::<AppTemplate>()
+    }
+}
+
+impl Default for AppTemplate {
+    fn default() -> Self {
+        AppTemplate {
+            name: String::from("unknown"),
+            description: String::from("not available"),
+            repository: String::from("not available"),
+            variables: vec![],
+            files: vec![],
+            auto_run: String::from(""),
+        }
     }
 }
 
