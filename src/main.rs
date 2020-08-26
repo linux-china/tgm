@@ -1,14 +1,14 @@
 mod models;
 
-use std::{env, fs};
-use models::Settings;
-use std::process::Command;
 use crate::models::AppTemplate;
-use std::fs::File;
-use std::collections::HashMap;
-use std::path::Path;
-use std::io::Write;
 use colored::*;
+use models::Settings;
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
+use std::path::Path;
+use std::process::Command;
+use std::{env, fs};
 
 fn main() {
     let sub_command = env::args().nth(1);
@@ -54,7 +54,11 @@ fn clone_template(template_name: &String, app_dir: &String, settings: &Settings)
         let dest_path = Path::new(&dest_dir);
         if !dest_path.exists() {
             println!("Beginning to clone {}", template.name);
-            let args = vec!["clone", "https://github.com/linux-china/spring-boot-java-template.git", dest_dir.as_str()];
+            let args = vec![
+                "clone",
+                "https://github.com/linux-china/spring-boot-java-template.git",
+                dest_dir.as_str(),
+            ];
             if let Ok(stdout_text) = execute_command("git", &args) {
                 println!("{}", stdout_text);
             }
@@ -72,9 +76,7 @@ fn display_help() {
 }
 
 fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
-    let result = Command::new(command)
-        .args(args.as_slice())
-        .output();
+    let result = Command::new(command).args(args.as_slice()).output();
     match result {
         Ok(output) => {
             if output.status.success() {
@@ -85,7 +87,7 @@ fn execute_command(command: &str, args: &Vec<&str>) -> Result<String, String> {
                 Ok(String::from("good"))
             }
         }
-        Err(e) => Err(e.to_string())
+        Err(e) => Err(e.to_string()),
     }
 }
 

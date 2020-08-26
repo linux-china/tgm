@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::env;
+use std::fs;
 use std::path::Path;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -23,7 +23,6 @@ pub struct Variable {
     pub description: String,
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AppTemplate {
     pub name: String,
@@ -40,11 +39,14 @@ impl Settings {
         let setting_json_path = home + "/.tgm/settings.json";
         let file_path = Path::new(&setting_json_path);
         if file_path.exists() {
-            let setting_json = fs::read_to_string(setting_json_path)
-                .expect("Failed to read ~/.tgm/settings.json");
+            let setting_json =
+                fs::read_to_string(setting_json_path).expect("Failed to read ~/.tgm/settings.json");
             serde_json::from_str(setting_json.as_str()).unwrap()
         } else {
-            Settings { templates: vec![], variables: vec![] }
+            Settings {
+                templates: vec![],
+                variables: vec![],
+            }
         }
     }
 
@@ -60,8 +62,8 @@ impl Settings {
 
 impl AppTemplate {
     pub fn new(template_json_file: &String) -> AppTemplate {
-        let setting_json = fs::read_to_string(template_json_file)
-            .expect("Failed to read template.json");
+        let setting_json =
+            fs::read_to_string(template_json_file).expect("Failed to read template.json");
         serde_json::from_str(setting_json.as_str()).unwrap()
     }
 }
