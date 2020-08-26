@@ -100,9 +100,11 @@ fn create_app(template_name: &str, app_dir: &str, settings: &Settings) {
     if let Some(template) = settings.find_template(&template_name) {
         let dest_path = Path::new(&dest_dir);
         if !dest_path.exists() {
-            println!("Beginning to clone {}", template.name);
+            println!("Beginning to create app from {}", template.name);
             let args = vec![
                 "clone",
+                "--depth",
+                "1",
                 template.repository.as_str(),
                 app_dir,
             ];
@@ -147,16 +149,19 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
     let template_json_file = format!("{}/template.json", app_dest_dir);
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
-    for v in app_template.variables.iter() {
-        print!("{}>", v.name.as_str().green());
-        std::io::stdout().flush().unwrap();
-        let mut input = String::new();
-        std::io::stdin().read_line(&mut input).unwrap();
-        variables.insert(format!("@{}@", v.name), String::from(input.trim()));
-    }
-    for file in app_template.files.iter() {
-        let resource_file = format!("{}/{}", app_dest_dir, file);
-        replace_variables(&resource_file, &variables);
+    if !app_template.variables.is_empty() {
+        println!("Please complete template variables.");
+        for v in app_template.variables.iter() {
+            print!("{}({}){}", v.name.as_str().green(), v.description, ">".green());
+            std::io::stdout().flush().unwrap();
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input).unwrap();
+            variables.insert(format!("@{}@", v.name), String::from(input.trim()));
+        }
+        for file in app_template.files.iter() {
+            let resource_file = format!("{}/{}", app_dest_dir, file);
+            replace_variables(&resource_file, &variables);
+        }
     }
     std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
     // remove origin
