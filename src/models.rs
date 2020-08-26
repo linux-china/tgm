@@ -65,13 +65,13 @@ impl Settings {
         file.write_all(json_text.as_bytes()).unwrap();
     }
 
-    pub fn find_template(&self, template_name: &String) -> Option<&Template> {
+    pub fn find_template(&self, template_name: &str) -> Option<&Template> {
         for template in self.templates.iter() {
             if template_name == &template.name {
                 return Some(template);
             }
         }
-        return None;
+        None
     }
 
     pub fn add_template(&mut self, name: String, url: String, description: String) {
@@ -96,13 +96,13 @@ impl Settings {
 }
 
 impl AppTemplate {
-    pub fn new(template_json_file: &String) -> AppTemplate {
+    pub fn new(template_json_file: &str) -> AppTemplate {
         let setting_json =
             fs::read_to_string(template_json_file).expect("Failed to read template.json");
         serde_json::from_str(setting_json.as_str()).unwrap()
     }
 
-    pub fn fetch_remote(url: &String) -> reqwest::Result<AppTemplate> {
+    pub fn fetch_remote(url: &str) -> reqwest::Result<AppTemplate> {
         reqwest::blocking::get(url)?.json::<AppTemplate>()
     }
 }
