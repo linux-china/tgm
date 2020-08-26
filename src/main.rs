@@ -40,6 +40,7 @@ fn main() {
                 let app_dir_arg = env::args().nth(3);
                 if let Some(app_dir) = app_dir_arg {
                     create_app(&template_name.unwrap(), &app_dir, &settings);
+                    println!("{}", format!("app created successfully under {} directory!", app_dir).as_str().green());
                 } else {
                     println!("{}", "Please specify the destination directory!".red());
                 }
@@ -96,14 +97,13 @@ fn create_app(template_name: &String, app_dir: &String, settings: &Settings) {
             match execute_command("git", &args) {
                 Ok(stdout_text) => {
                     println!("{}", stdout_text);
-                    std::env::set_current_dir(Path::new(&dest_dir)).unwrap();
                 }
                 Err(e) => {
                     println!("{}", e.as_str().red());
                 }
             }
         }
-        // change work directory
+        // template variables input
         prompt_input_variables(&settings, &dest_dir);
     } else {
         println!("Template not found: {}", template_name);
@@ -145,6 +145,21 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &String) {
     for file in app_template.files.iter() {
         let resource_file = format!("{}/{}", app_dest_dir, file);
         replace_variables(&resource_file, &variables);
+    }
+    std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
+    // auto run
+    if !app_template.auto_run.is_empty() {
+        let parts: Vec<&str> = app_template.auto_run.split(" ").collect();
+        println!("Begin to execute auto run: {}", app_template.auto_run);
+        let args: Vec<&str> = parts[1..].to_vec();
+        match execute_command(parts[0], &args) {
+            Ok(stdout_text) => {
+                println!("{}", stdout_text);
+            }
+            Err(e) => {
+                println!("{}", e.as_str().red());
+            }
+        }
     }
 }
 
