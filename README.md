@@ -1,23 +1,74 @@
 Template Generator Management
 =============================
 
-Generate project structure from git template repository
-
-# tgm Settings
-
-~/.tgm/settings.json 保存所有的配置信息，如模板列表，全局变量等。
+Generate project structure from git template repository.
 
 # Template repository
-在template repository中会包含一个template.json，包括模板的信息，目前主要是模板变量。
+Please add template.json file in your template repository, code as following：
 
-在项目模板的文件中，要被替换的变量格式为 @project@
+```json
+{
+  "name": "spring-boot-java",
+  "repository": "https://github.com/linux-china/spring-boot-java-template",
+  "description": "Spring Boot App Java",
+  "auto_run": "mvn -DskipTests compile",
+  "variables": [
+    {
+      "name": "groupId",
+      "value": "org.mvnsearch",
+      "description": "Maven groupId"
+    },
+    {
+      "name": "artifactId",
+      "value": "spring-boot-demo",
+      "description": "Maven artifactId"
+    }
+  ],
+  "files": [
+    "demo.txt",
+    "pom.xml"
+  ]
+}
+```
 
-#  commands:
+In the resource files, such as pom.xml, use template variable as following:
 
-* list: 列出所有项目模板
-* clone: 生成项目模板
-* sync: 和模板进行同步
+```xml
+<project>
+  <groupId>@groupId@</groupId>
+  <artifactId>@artifactId@</artifactId>
+</project>
+```
 
+# Usage
+
+```
+$ tgm add spring-boot-java https://github.com/linux-china/spring-boot-java-template.git
+$ tgm list
+$ tgm clone spring-boot-java  spring-app-demo
+```
+
+
+# tgm commands:
+
+* list: list all templates
+* add: add new template
+
+```
+$ tgm add spring-boot-java https://github.com/linux-china/spring-boot-java-template.git
+```
+
+* remove: remove template
+
+```
+$ tgm remove spring-boot-java
+```
+
+* create: create app from template
+
+```
+$ tgm create spring-boot-java spring-demo1 
+```
 
 # References
 
