@@ -26,8 +26,7 @@ Please add template.json file in your template repository, code as following：
     }
   ],
   "files": [
-    "demo.txt",
-    "pom.xml"
+    "pom.xml","src/main/resources/application.properties"
   ]
 }
 ```
