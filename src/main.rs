@@ -53,8 +53,14 @@ fn main() {
                 let template_name = env::args().nth(2);
                 let app_dir_arg = env::args().nth(3);
                 if let Some(app_dir) = app_dir_arg {
-                    create_app(&template_name.unwrap(), &app_dir, &settings);
-                    println!("{}", format!("app created successfully under {} directory!", app_dir).as_str().green());
+                    let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+                    create_app(&template_name.unwrap(), &current_dir, &app_dir, &settings);
+                    //check app created or not
+                    let dest_dir = format!("{}/{}", current_dir, app_dir);
+                    let dest_path = Path::new(&dest_dir);
+                    if dest_path.exists() {
+                        println!("{}", format!("app created successfully under {} directory!", app_dir).as_str().green());
+                    }
                 } else {
                     println!("{}", "Please specify the destination directory!".red());
                 }
@@ -96,9 +102,8 @@ fn list_templates(settings: &Settings) {
     }
 }
 
-fn create_app(template_name: &str, app_dir: &str, settings: &Settings) {
-    let current_dir = std::env::current_dir().unwrap();
-    let dest_dir = format!("{}/{}", current_dir.to_str().unwrap(), app_dir);
+fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings: &Settings) {
+    let dest_dir = format!("{}/{}", workspace_dir, app_dir);
     if let Some(template) = settings.find_template(&template_name) {
         let dest_path = Path::new(&dest_dir);
         if !dest_path.exists() {
@@ -213,7 +218,8 @@ mod tests {
         let settings = Settings::load();
         let template_name = "spring-boot-java";
         let app_dir = "temp/demo";
-        create_app(template_name, app_dir, &settings);
+        let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+        create_app(template_name, &current_dir, app_dir, &settings);
     }
 
     #[test]
