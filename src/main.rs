@@ -175,7 +175,7 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
     execute_command("rm", &["-rf", ".git"]).unwrap();
     execute_command("git", &["init"]).unwrap();
     // post create
-    if !app_template.post_create.is_some() {
+    if app_template.post_create.is_some() {
         let post_create = app_template.post_create.unwrap();
         if !post_create.is_empty() {
             let parts: Vec<&str> = post_create.split(' ').collect();
