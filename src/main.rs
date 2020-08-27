@@ -140,13 +140,9 @@ fn execute_command(command: &str, args: &[&str]) -> Result<String, String> {
     let result = Command::new(command).args(args).output();
     match result {
         Ok(output) => {
-            if output.status.success() {
-                std::str::from_utf8(output.stdout.as_slice())
-                    .map(String::from)
-                    .map_err(|e| e.to_string())
-            } else {
-                Ok(String::from("good"))
-            }
+            std::str::from_utf8(output.stdout.as_slice())
+                .map(String::from)
+                .map_err(|e| e.to_string())
         }
         Err(e) => Err(e.to_string()),
     }
