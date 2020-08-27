@@ -127,7 +127,7 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
         // template variables input
         prompt_input_variables(&settings, &dest_dir);
     } else {
-        println!("Template not found: {}", template_name);
+        println!("{}", format!("Template not found: {}", template_name).as_str().red());
     }
 }
 
