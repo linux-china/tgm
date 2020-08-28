@@ -155,7 +155,7 @@ fn main() {
             );
         }
     } else {
-        println!("No subcommand was used");
+        println!("{}","No subcommand was used".red());
     }
 }
 
