@@ -88,7 +88,7 @@ impl Settings {
         if self.find_template(name).is_some() {
             self.templates.retain(|t| t.name != *name);
             self.fresh_settings();
-            println!("{} template added!", name);
+            println!("{} template removed!", name);
         } else {
             println!("{} template not found!", name);
         }
