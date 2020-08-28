@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
-use std::path::Path;
 use std::fs::File;
 use std::io::Write;
+use std::path::Path;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
@@ -76,7 +76,11 @@ impl Settings {
 
     pub fn add_template(&mut self, name: String, url: String, description: String) {
         if self.find_template(&name).is_none() {
-            self.templates.push(Template { name: name.clone(), repository: url, description });
+            self.templates.push(Template {
+                name: name.clone(),
+                repository: url,
+                description,
+            });
             self.fresh_settings();
             println!("{} template added!", name);
         } else {
