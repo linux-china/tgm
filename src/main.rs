@@ -1,69 +1,76 @@
 mod models;
 
 use crate::models::AppTemplate;
+use clap::{App, Arg, SubCommand};
 use colored::*;
 use models::Settings;
 use std::collections::HashMap;
+use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use std::fs;
-use clap::{App, SubCommand, Arg};
 
 const VERSION: &str = "0.1.3";
 
 fn main() {
     let add_command = SubCommand::with_name("add")
         .about("Add template")
-        .arg(Arg::with_name("name")
-            .long("name") // allow --name
-            .takes_value(true)
-            .help("template name")
-            .required(true)
+        .arg(
+            Arg::with_name("name")
+                .long("name") // allow --name
+                .takes_value(true)
+                .help("template name")
+                .required(true),
         )
-        .arg(Arg::with_name("repo")
-            .long("repo") // allow --name
-            .takes_value(true)
-            .help("git repository url")
-            .required(true)
+        .arg(
+            Arg::with_name("repo")
+                .long("repo") // allow --name
+                .takes_value(true)
+                .help("git repository url")
+                .required(true),
         )
-        .arg(Arg::with_name("desc")
-            .long("desc") // allow --name
-            .takes_value(true)
-            .help("template description")
-            .required(true)
+        .arg(
+            Arg::with_name("desc")
+                .long("desc") // allow --name
+                .takes_value(true)
+                .help("template description")
+                .required(true),
         );
     let create_command = SubCommand::with_name("create")
         .about("create app from template")
-        .arg(Arg::with_name("name")
-            //.long("name") // allow --name
-            .takes_value(true)
-            .help("template name")
-            .required(true)
-            .index(1)
+        .arg(
+            Arg::with_name("name")
+                //.long("name") // allow --name
+                .takes_value(true)
+                .help("template name")
+                .required(true)
+                .index(1),
         )
-        .arg(Arg::with_name("dir")
-            //.long("dir") // allow --name
-            .takes_value(true)
-            .help("App's directory")
-            .required(true)
-            .index(2)
+        .arg(
+            Arg::with_name("dir")
+                //.long("dir") // allow --name
+                .takes_value(true)
+                .help("App's directory")
+                .required(true)
+                .index(2),
         );
     let remove_command = SubCommand::with_name("remove")
         .about("remove template")
-        .arg(Arg::with_name("name")
-            .takes_value(true)
-            .help("template name")
-            .required(true)
+        .arg(
+            Arg::with_name("name")
+                .takes_value(true)
+                .help("template name")
+                .required(true),
         );
     let import_command = SubCommand::with_name("import")
         .about("import template from repository's template.json")
-        .arg(Arg::with_name("name")
-            .long("name")
-            .takes_value(true)
-            .help("github's repository name or absolute url")
-            .required(true)
+        .arg(
+            Arg::with_name("name")
+                .long("name")
+                .takes_value(true)
+                .help("github's repository name or absolute url")
+                .required(true),
         );
     // init Clap
     let matches = App::new("tgm")
@@ -92,19 +99,37 @@ fn main() {
         let mut url = String::from(args.value_of("name").unwrap());
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             // github template repository
-            url = format!("https://raw.githubusercontent.com/{}/master/template.json", url);
+            url = format!(
+                "https://raw.githubusercontent.com/{}/master/template.json",
+                url
+            );
         } else {
-            println!("{}", "repository's url should start with http:// or https://");
+            println!(
+                "{}",
+                "repository's url should start with http:// or https://".red()
+            );
         }
         if !url.ends_with("/template.json") {
             url = format!("{}/template.json", url);
         }
         match AppTemplate::fetch_remote(&url) {
             Ok(app_template) => {
-                add_template(&app_template.name, &app_template.repository, &app_template.description);
+                add_template(
+                    &app_template.name,
+                    &app_template.repository,
+                    &app_template.description,
+                );
             }
             Err(_e) => {
-                println!("{}", format!("Failed to load template from {}, please check the json data!", url).as_str().red());
+                println!(
+                    "{}",
+                    format!(
+                        "Failed to load template from {}, please check the json data!",
+                        url
+                    )
+                    .as_str()
+                    .red()
+                );
             }
         }
     } else if sub_command == "remove" {
@@ -122,7 +147,12 @@ fn main() {
         let dest_dir = format!("{}/{}", current_dir, app_dir);
         let dest_path = Path::new(&dest_dir);
         if dest_path.exists() {
-            println!("{}", format!("app created successfully under {} directory!", app_dir).as_str().green());
+            println!(
+                "{}",
+                format!("app created successfully under {} directory!", app_dir)
+                    .as_str()
+                    .green()
+            );
         }
     } else {
         println!("No subcommand was used");
@@ -141,10 +171,18 @@ fn delete_template(name: &str) {
 
 fn list_templates(settings: &Settings) {
     if settings.templates.is_empty() {
-        println!("No template available! Please use '{}' to add new template.", "tgm add name repo_url".green());
+        println!(
+            "No template available! Please use '{}' to add new template.",
+            "tgm add name repo_url".green()
+        );
     } else {
         for template in settings.templates.iter() {
-            println!("{} - {} : {}", template.name.as_str().blue(), template.repository, template.description);
+            println!(
+                "{} - {} : {}",
+                template.name.as_str().blue(),
+                template.repository,
+                template.description
+            );
         }
     }
 }
@@ -174,18 +212,21 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
         // template variables input
         prompt_input_variables(&settings, &dest_dir);
     } else {
-        println!("{}", format!("Template not found: {}", template_name).as_str().red());
+        println!(
+            "{}",
+            format!("Template not found: {}", template_name)
+                .as_str()
+                .red()
+        );
     }
 }
 
 fn execute_command(command: &str, args: &[&str]) -> Result<String, String> {
     let result = Command::new(command).args(args).output();
     match result {
-        Ok(output) => {
-            std::str::from_utf8(output.stdout.as_slice())
-                .map(String::from)
-                .map_err(|e| e.to_string())
-        }
+        Ok(output) => std::str::from_utf8(output.stdout.as_slice())
+            .map(String::from)
+            .map_err(|e| e.to_string()),
         Err(e) => Err(e.to_string()),
     }
 }
@@ -197,7 +238,12 @@ fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
     if !app_template.variables.is_empty() {
         println!("Please complete template variables.");
         for v in app_template.variables.iter() {
-            print!("{}({}){}", v.name.as_str().green(), v.description, ">".blue());
+            print!(
+                "{}({}){}",
+                v.name.as_str().green(),
+                v.description,
+                ">".blue()
+            );
             std::io::stdout().flush().unwrap();
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
