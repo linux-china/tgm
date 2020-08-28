@@ -8,77 +8,124 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use std::{env, fs};
+use std::fs;
+use clap::{App, SubCommand, Arg};
 
 const VERSION: &str = "0.1.3";
 
 fn main() {
-    let sub_command = env::args().nth(1);
+    let add_command = SubCommand::with_name("add")
+        .about("Add template")
+        .arg(Arg::with_name("name")
+            .long("name") // allow --name
+            .takes_value(true)
+            .help("template name")
+            .required(true)
+        )
+        .arg(Arg::with_name("repo")
+            .long("repo") // allow --name
+            .takes_value(true)
+            .help("git repository url")
+            .required(true)
+        )
+        .arg(Arg::with_name("desc")
+            .long("desc") // allow --name
+            .takes_value(true)
+            .help("template description")
+            .required(true)
+        );
+    let create_command = SubCommand::with_name("create")
+        .about("create app from template")
+        .arg(Arg::with_name("name")
+            //.long("name") // allow --name
+            .takes_value(true)
+            .help("template name")
+            .required(true)
+            .index(1)
+        )
+        .arg(Arg::with_name("dir")
+            //.long("dir") // allow --name
+            .takes_value(true)
+            .help("App's directory")
+            .required(true)
+            .index(2)
+        );
+    let remove_command = SubCommand::with_name("remove")
+        .about("remove template")
+        .arg(Arg::with_name("name")
+            .takes_value(true)
+            .help("template name")
+            .required(true)
+        );
+    let import_command = SubCommand::with_name("import")
+        .about("import template from repository's template.json")
+        .arg(Arg::with_name("name")
+            .long("name")
+            .takes_value(true)
+            .help("github's repository name or absolute url")
+            .required(true)
+        );
+    // init Clap
+    let matches = App::new("tgm")
+        .version(VERSION)
+        .about("template generator manager")
+        .author("linux_china")
+        .subcommand(SubCommand::with_name("list").about("list templates"))
+        .subcommand(add_command)
+        .subcommand(remove_command)
+        .subcommand(import_command)
+        .subcommand(create_command)
+        .get_matches();
+
     let settings = Settings::load();
-    if let Some(command) = sub_command {
-        match command.as_str() {
-            "list" => {
-                list_templates(&settings);
+    let (sub_command, args_match) = matches.subcommand();
+    if sub_command == "list" {
+        list_templates(&settings);
+    } else if sub_command == "add" {
+        let args = args_match.unwrap();
+        let name = args.value_of("name").unwrap();
+        let repo = args.value_of("repo").unwrap();
+        let desc = args.value_of("desc").unwrap();
+        add_template(name, repo, desc);
+    } else if sub_command == "import" {
+        let args = args_match.unwrap();
+        let mut url = String::from(args.value_of("name").unwrap());
+        if !(url.starts_with("http://") || url.starts_with("https://")) {
+            // github template repository
+            url = format!("https://raw.githubusercontent.com/{}/master/template.json", url);
+        } else {
+            println!("{}", "repository's url should start with http:// or https://");
+        }
+        if !url.ends_with("/template.json") {
+            url = format!("{}/template.json", url);
+        }
+        match AppTemplate::fetch_remote(&url) {
+            Ok(app_template) => {
+                add_template(&app_template.name, &app_template.repository, &app_template.description);
             }
-            "add" => {
-                let name = env::args().nth(2).unwrap();
-                let url_arg = env::args().nth(3);
-                if let Some(url) = url_arg {
-                    add_template(&name, &url, "Desc absent!");
-                } else {
-                    let mut url = name.clone();
-                    if !(url.starts_with("http://") || url.starts_with("https://")) {
-                        // github template repository
-                        url = format!("https://raw.githubusercontent.com/{}/master/template.json", name);
-                    }
-                    match AppTemplate::fetch_remote(&url) {
-                        Ok(app_template) => {
-                            add_template(&app_template.name, &app_template.repository, &app_template.description);
-                        }
-                        Err(_e) => {
-                            println!("{}", format!("Failed to load template from {}, please check the json data!", url).as_str().red());
-                        }
-                    }
-                }
-            }
-            "remove" => {
-                let name_arg = env::args().nth(2);
-                if let Some(name) = name_arg {
-                    delete_template(&name);
-                } else {
-                    println!("{}", "Please specify template name!".red());
-                }
-            }
-            "create" => {
-                let template_name = env::args().nth(2);
-                let app_dir_arg = env::args().nth(3);
-                if let Some(app_dir) = app_dir_arg {
-                    let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
-                    create_app(&template_name.unwrap(), &current_dir, &app_dir, &settings);
-                    //check app created or not
-                    let dest_dir = format!("{}/{}", current_dir, app_dir);
-                    let dest_path = Path::new(&dest_dir);
-                    if dest_path.exists() {
-                        println!("{}", format!("app created successfully under {} directory!", app_dir).as_str().green());
-                    }
-                } else {
-                    println!("{}", "Please specify the destination directory!".red());
-                }
-            }
-            "sync" => {
-                let dest_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
-                prompt_input_variables(&settings, &dest_dir);
-            }
-            "help" => {
-                display_help();
-            }
-            _ => {
-                let hint = format!("Command not found: {}", command).as_str().red();
-                println!("{}", hint);
+            Err(_e) => {
+                println!("{}", format!("Failed to load template from {}, please check the json data!", url).as_str().red());
             }
         }
+    } else if sub_command == "remove" {
+        let args = args_match.unwrap();
+        let name = args.value_of("name").unwrap();
+        delete_template(name);
+    } else if sub_command == "create" {
+        let args = args_match.unwrap();
+        let template_name = args.value_of("name").unwrap();
+        let app_dir = args.value_of("dir").unwrap();
+        println!("{}:{}", template_name, app_dir);
+        let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+        create_app(template_name, &current_dir, app_dir, &settings);
+        //check app created or not
+        let dest_dir = format!("{}/{}", current_dir, app_dir);
+        let dest_path = Path::new(&dest_dir);
+        if dest_path.exists() {
+            println!("{}", format!("app created successfully under {} directory!", app_dir).as_str().green());
+        }
     } else {
-        println!("Please use sub commands: list, create, add, remove, help etc");
+        println!("No subcommand was used");
     }
 }
 
@@ -129,11 +176,6 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
     } else {
         println!("{}", format!("Template not found: {}", template_name).as_str().red());
     }
-}
-
-fn display_help() {
-    println!("tgm-{}: https://github.com/linux-china/tgm", VERSION);
-    println!("sub commands: list, create, add, remove etc")
 }
 
 fn execute_command(command: &str, args: &[&str]) -> Result<String, String> {
@@ -229,10 +271,5 @@ mod tests {
     fn test_delete_template() {
         let name = "demo";
         delete_template(name);
-    }
-
-    #[test]
-    fn test_display_help() {
-        display_help();
     }
 }
