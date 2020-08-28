@@ -172,8 +172,8 @@ fn delete_template(name: &str) {
 fn list_templates(settings: &Settings) {
     if settings.templates.is_empty() {
         println!(
-            "No template available! Please use '{}' to add new template.",
-            "tgm add name repo_url".green()
+            "No template available! Please use '{}' commands to add new template.",
+            "add or import".green()
         );
     } else {
         for template in settings.templates.iter() {
