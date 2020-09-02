@@ -112,7 +112,7 @@ fn main() {
         if !url.ends_with("/template.json") {
             url = format!("{}/template.json", url);
         }
-        match AppTemplate::fetch_remote(&url) {
+        match AppTemplate::with_remote(&url) {
             Ok(app_template) => {
                 add_template(
                     &app_template.name,

@@ -51,8 +51,10 @@ impl Settings {
             }
         }
     }
+}
 
-    pub fn fresh_settings(&self) {
+impl Settings {
+    pub fn flush(&self) {
         let home = env::var("HOME").unwrap();
         let tgm_home = format!("{}/.tgm", home);
         let tgm_path = Path::new(&tgm_home);
@@ -81,7 +83,7 @@ impl Settings {
                 repository: url,
                 description,
             });
-            self.fresh_settings();
+            self.flush();
             println!("{} template added!", name);
         } else {
             println!("{} template already exits!", name);
@@ -91,7 +93,7 @@ impl Settings {
     pub fn delete_template(&mut self, name: &str) {
         if self.find_template(name).is_some() {
             self.templates.retain(|t| t.name != *name);
-            self.fresh_settings();
+            self.flush();
             println!("{} template removed!", name);
         } else {
             println!("{} template not found!", name);
@@ -111,10 +113,11 @@ impl AppTemplate {
         }
     }
 
-    pub fn fetch_remote(url: &str) -> reqwest::Result<AppTemplate> {
+    pub fn with_remote(url: &str) -> reqwest::Result<AppTemplate> {
         reqwest::blocking::get(url)?.json::<AppTemplate>()
     }
 }
+
 
 impl Default for AppTemplate {
     fn default() -> Self {
@@ -158,7 +161,7 @@ mod tests {
     #[test]
     fn test_fetch_remote_template() -> reqwest::Result<()> {
         let url = "https://raw.githubusercontent.com/linux-china/spring-boot-java-template/master/template.json";
-        let app_template = AppTemplate::fetch_remote(&url).unwrap();
+        let app_template = AppTemplate::with_remote(&url).unwrap();
         println!("{:?}", app_template);
         Ok(())
     }
