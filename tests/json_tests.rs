@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::env;
 use std::fs;
+use chrono::{DateTime, Local, Datelike};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Person {
@@ -44,4 +45,11 @@ fn test_json() -> Result<()> {
     println!("{:?}", person2);
 
     Ok(())
+}
+
+#[test]
+fn test_chrono() {
+    let now: DateTime<Local> = Local::now();
+    println!("{}",now.year());
+    println!("{}",format!("{}/{}/{}", now.month(),now.day(),now.year()));
 }
