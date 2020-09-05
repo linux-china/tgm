@@ -1,6 +1,7 @@
 tgm - Template Generator Manager
 ================================
 ![Build Status](https://img.shields.io/github/workflow/status/linux-china/tgm/Rust)
+[![tgm Crate](https://img.shields.io/crates/v/tgm)](https://crates.io/crates/tgm)
 
 Generate project structure from git template repository.
 
