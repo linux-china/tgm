@@ -78,6 +78,7 @@ fn main() {
         .about("template generator manager")
         .author("linux_china")
         .subcommand(SubCommand::with_name("list").about("list templates"))
+        .subcommand(SubCommand::with_name("config").about("Config global variables"))
         .subcommand(add_command)
         .subcommand(remove_command)
         .subcommand(import_command)
@@ -88,6 +89,8 @@ fn main() {
     let (sub_command, args_match) = matches.subcommand();
     if sub_command == "list" {
         list_templates(&settings);
+    } else if sub_command == "config" {
+        config_global_variables();
     } else if sub_command == "add" {
         let args = args_match.unwrap();
         let name = args.value_of("name").unwrap();
@@ -185,6 +188,40 @@ fn list_templates(settings: &Settings) {
             );
         }
     }
+}
+
+fn config_global_variables() {
+    let variable_names = vec![("author", "author name"), ("email", "your email"), ("github_user_name", "your Github user name")];
+    let mut settings = Settings::load();
+    for pair in variable_names.iter() {
+        let global_variable = settings.find_variable_value(&pair.0);
+        if let Some(variable_value) = global_variable.clone() {
+            print!(
+                "Define value for variable '{}'({}): {} : {}",
+                pair.0.green(),
+                pair.1,
+                variable_value,
+                ">".blue()
+            );
+        } else {
+            print!(
+                "Define value for variable '{}'({}){}",
+                pair.0.green(),
+                pair.1,
+                ">".blue()
+            );
+        }
+        std::io::stdout().flush().unwrap();
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).unwrap();
+        if input.trim().is_empty() {
+            if let Some(variable_value) = global_variable.clone() {
+                input = variable_value.clone();
+            }
+        }
+        settings.set_variable(pair.0, &input.trim(), pair.1);
+    }
+    settings.flush();
 }
 
 fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings: &Settings) {
