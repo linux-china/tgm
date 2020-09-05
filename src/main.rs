@@ -127,8 +127,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
@@ -155,7 +155,7 @@ fn main() {
             );
         }
     } else {
-        println!("{}","No subcommand was used".red());
+        println!("{}", "No subcommand was used".red());
     }
 }
 
@@ -231,22 +231,38 @@ fn execute_command(command: &str, args: &[&str]) -> Result<String, String> {
     }
 }
 
-fn prompt_input_variables(_settings: &Settings, app_dest_dir: &str) {
+fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     let template_json_file = format!("{}/template.json", app_dest_dir);
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
     if !app_template.variables.is_empty() {
         println!("Please complete template variables.");
         for v in app_template.variables.iter() {
-            print!(
-                "{}({}){}",
-                v.name.as_str().green(),
-                v.description,
-                ">".blue()
-            );
+            let global_variable = settings.find_variable_value(&v.name);
+            if let Some(variable_value) = global_variable.clone() {
+                print!(
+                    "Define value for variable '{}'({}): {} : {}",
+                    v.name.as_str().green(),
+                    v.description,
+                    variable_value,
+                    ">".blue()
+                );
+            } else {
+                print!(
+                    "Define value for variable '{}'({}){}",
+                    v.name.as_str().green(),
+                    v.description,
+                    ">".blue()
+                );
+            }
             std::io::stdout().flush().unwrap();
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
+            if input.trim().is_empty() {
+                if let Some(variable_value) = global_variable.clone() {
+                    input = variable_value.clone();
+                }
+            }
             variables.insert(format!("@{}@", v.name), String::from(input.trim()));
         }
         for file in app_template.files.iter() {
