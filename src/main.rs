@@ -1,6 +1,7 @@
 mod models;
 
 use crate::models::AppTemplate;
+use chrono::{DateTime, Datelike, Local};
 use clap::{App, Arg, SubCommand};
 use colored::*;
 use models::Settings;
@@ -10,8 +11,6 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use chrono::{DateTime, Local, Datelike};
-
 
 const VERSION: &str = "0.2.0";
 
@@ -132,8 +131,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
@@ -193,7 +192,11 @@ fn list_templates(settings: &Settings) {
 }
 
 fn config_global_variables() {
-    let variable_names = vec![("author_name", "author name"), ("author_email", "your email"), ("github_user_name", "your Github user name")];
+    let variable_names = vec![
+        ("author_name", "author name"),
+        ("author_email", "your email"),
+        ("github_user_name", "your Github user name"),
+    ];
     let mut settings = Settings::load();
     for pair in variable_names.iter() {
         let global_variable = settings.find_variable_value(&pair.0);
@@ -277,11 +280,20 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     //default global variables
     let now: DateTime<Local> = Local::now();
     variables.insert(String::from("current_year"), now.year().to_string());
-    variables.insert(String::from("current_date"), format!("{}/{}/{}", now.month(), now.day(), now.year()));
+    variables.insert(
+        String::from("current_date"),
+        format!("{}/{}/{}", now.month(), now.day(), now.year()),
+    );
     //os related variables
     variables.insert(String::from("os_name"), String::from(std::env::consts::OS));
-    variables.insert(String::from("os_family"), String::from(std::env::consts::FAMILY));
-    variables.insert(String::from("os_arch"), String::from(std::env::consts::ARCH));
+    variables.insert(
+        String::from("os_family"),
+        String::from(std::env::consts::FAMILY),
+    );
+    variables.insert(
+        String::from("os_arch"),
+        String::from(std::env::consts::ARCH),
+    );
     if !app_template.variables.is_empty() {
         println!("Please complete template variables.");
         for v in app_template.variables.iter() {

@@ -136,7 +136,6 @@ impl AppTemplate {
     }
 }
 
-
 impl Default for AppTemplate {
     fn default() -> Self {
         AppTemplate {
