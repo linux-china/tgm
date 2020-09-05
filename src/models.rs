@@ -99,6 +99,15 @@ impl Settings {
             println!("{} template not found!", name);
         }
     }
+
+    pub fn find_variable_value(&self, name: &str) -> Option<String> {
+        for variable in self.variables.iter() {
+            if variable.name == name {
+                return variable.value.clone();
+            }
+        }
+        None
+    }
 }
 
 impl AppTemplate {
