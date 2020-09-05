@@ -10,6 +10,8 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
+use chrono::{DateTime, Local, Datelike};
+
 
 const VERSION: &str = "0.2.0";
 
@@ -191,7 +193,7 @@ fn list_templates(settings: &Settings) {
 }
 
 fn config_global_variables() {
-    let variable_names = vec![("author", "author name"), ("email", "your email"), ("github_user_name", "your Github user name")];
+    let variable_names = vec![("author_name", "author name"), ("author_email", "your email"), ("github_user_name", "your Github user name")];
     let mut settings = Settings::load();
     for pair in variable_names.iter() {
         let global_variable = settings.find_variable_value(&pair.0);
@@ -272,6 +274,14 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     let template_json_file = format!("{}/template.json", app_dest_dir);
     let app_template = AppTemplate::new(&template_json_file);
     let mut variables = HashMap::<String, String>::new();
+    //default global variables
+    let now: DateTime<Local> = Local::now();
+    variables.insert(String::from("current_year"), now.year().to_string());
+    variables.insert(String::from("current_date"), format!("{}/{}/{}", now.month(), now.day(), now.year()));
+    //os related variables
+    variables.insert(String::from("os_name"), String::from(std::env::consts::OS));
+    variables.insert(String::from("os_family"), String::from(std::env::consts::FAMILY));
+    variables.insert(String::from("os_arch"), String::from(std::env::consts::ARCH));
     if !app_template.variables.is_empty() {
         println!("Please complete template variables.");
         for v in app_template.variables.iter() {
