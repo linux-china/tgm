@@ -108,6 +108,15 @@ impl Settings {
         }
         None
     }
+
+    pub fn set_variable(&mut self, name: &str, value: &str, description: &str) {
+        for variable in self.variables.iter_mut() {
+            if variable.name == name {
+                variable.value = Some(String::from(value));
+                variable.description = String::from(description);
+            }
+        }
+    }
 }
 
 impl AppTemplate {
