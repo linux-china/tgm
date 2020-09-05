@@ -46,6 +46,14 @@ In the resource files, such as pom.xml, use template variable as following:
 </project>
 ```
 
+*default global variables:*
+
+* current_year: current year, such as 2020
+* current_date: current date, format like 08/30/2020
+* os_name: linux, macos, ios, freebsd, dragonfly, netbsd, openbsd, solaris, android, windows
+* os_family: unix, windows
+* os_arch: x86_64, arm
+
 # Install & Usage
 
 ```
