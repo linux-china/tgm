@@ -76,7 +76,7 @@ fn main() {
     // init Clap
     let matches = App::new("tgm")
         .version(VERSION)
-        .about("template generator manager")
+        .about("template generator manager: https://github.com/linux-china/tgm")
         .author("linux_china")
         .subcommand(SubCommand::with_name("list").about("list templates"))
         .subcommand(SubCommand::with_name("config").about("Config global variables"))
