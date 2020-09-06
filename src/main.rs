@@ -130,8 +130,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
@@ -279,7 +279,10 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     //default global variables
     let now: DateTime<Local> = Local::now();
     variables.insert(String::from("current_year"), now.year().to_string());
-    variables.insert(String::from("current_date"), now.format("%m/%d/%Y").to_string());
+    variables.insert(
+        String::from("current_date"),
+        now.format("%m/%d/%Y").to_string(),
+    );
     //os related variables
     variables.insert(String::from("os_name"), String::from(std::env::consts::OS));
     variables.insert(
