@@ -192,9 +192,9 @@ fn list_templates(settings: &Settings) {
 
 fn config_global_variables() {
     let variable_names = vec![
-        ("author_name", "author name"),
-        ("author_email", "your email"),
-        ("github_user_name", "your Github user name"),
+        ("author_name", "author's name"),
+        ("author_email", "author's email"),
+        ("github_user_name", "author's Github user name"),
     ];
     let mut settings = Settings::load();
     for pair in variable_names.iter() {
