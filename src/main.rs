@@ -68,7 +68,6 @@ fn main() {
         .about("import template from repository's template.json")
         .arg(
             Arg::with_name("name")
-                .long("name")
                 .takes_value(true)
                 .help("github's repository name or absolute url")
                 .required(true),
