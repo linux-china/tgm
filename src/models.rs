@@ -114,8 +114,14 @@ impl Settings {
             if variable.name == name {
                 variable.value = Some(String::from(value));
                 variable.description = String::from(description);
+                return;
             }
         }
+        self.variables.push(Variable {
+            name: String::from(name),
+            value: Some(String::from(value)),
+            description: String::from(description),
+        });
     }
 }
 
