@@ -11,6 +11,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
+use std::process::Stdio;
 
 const VERSION: &str = "0.3.1";
 
@@ -337,15 +338,16 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
         if !post_create.is_empty() {
             let parts: Vec<&str> = post_create.split(' ').collect();
             println!("Begin to execute post_create: {}", post_create);
-            let args: Vec<&str> = parts[1..].to_vec();
-            match execute_command(parts[0], &args) {
-                Ok(stdout_text) => {
-                    println!("{}", stdout_text);
-                }
-                Err(e) => {
-                    println!("{}", e.as_str().red());
-                }
+            let mut args: Vec<&str> = vec![];
+            if parts.len() > 1 {
+                args = parts[1..].to_vec();
             }
+            let _ = Command::new(parts[0])
+                .args(&args)
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .output()
+                .unwrap();
         }
     }
 }
