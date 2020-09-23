@@ -42,11 +42,11 @@ pub struct GithubRepo {
     pub name: String,
     pub full_name: String,
     pub description: String,
-    pub url: String,
+    pub html_url: String,
 }
 
 impl GithubRepo {
-    fn fetch_tgm_template_repos() -> reqwest::Result<Vec<GithubRepo>> {
+    pub fn fetch_tgm_template_repos() -> reqwest::Result<Vec<GithubRepo>> {
         let url = "https://api.github.com/orgs/tgm-templates/repos?type=public";
         let response = Client::builder().build()?.get(url)
             .header("Accept", "application/vnd.github.v3+json")
