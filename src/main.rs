@@ -5,6 +5,7 @@ use chrono::{DateTime, Datelike, Local};
 use clap::{App, Arg, SubCommand};
 use colored::*;
 use models::Settings;
+use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
@@ -12,7 +13,6 @@ use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
-use regex::Regex;
 
 const VERSION: &str = "0.3.1";
 
@@ -132,8 +132,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
@@ -304,7 +304,10 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
                 let pattern = v.pattern.clone().unwrap();
                 if let Ok(regex) = Regex::new(&pattern) {
                     if !regex.is_match(&value) {
-                        let hint = format!("'{}' is illegal, and should match with '{}' regex pattern!", value, pattern);
+                        let hint = format!(
+                            "'{}' is illegal, and should match with '{}' regex pattern!",
+                            value, pattern
+                        );
                         println!("{}", hint.as_str().red());
                         value = prompt_input_variable(settings, v);
                     }
