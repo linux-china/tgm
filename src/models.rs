@@ -4,6 +4,7 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use reqwest::blocking::Client;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
@@ -34,6 +35,25 @@ pub struct AppTemplate {
     pub post_create: Option<String>,
     pub variables: Vec<Variable>,
     pub files: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct GithubRepo {
+    pub name: String,
+    pub full_name: String,
+    pub description: String,
+    pub url: String,
+}
+
+impl GithubRepo {
+    fn fetch_tgm_template_repos() -> reqwest::Result<Vec<GithubRepo>> {
+        let url = "https://api.github.com/orgs/tgm-templates/repos?type=public";
+        let response = Client::builder().build()?.get(url)
+            .header("Accept", "application/vnd.github.v3+json")
+            .header("User-Agent", "Awesome-tgm-App")
+            .send()?;
+        response.json::<Vec<GithubRepo>>()
+    }
 }
 
 impl Settings {
@@ -188,6 +208,13 @@ mod tests {
         let url = "https://gist.githubusercontent.com/linux-china/50d0ad9db30489951dc66ecfa4fe2785/raw/8cef649356a4b073e4d55e0221eff97f31133522/template.json";
         let app_template = AppTemplate::with_remote(&url).unwrap();
         println!("{:?}", app_template);
+        Ok(())
+    }
+
+    #[test]
+    fn test_github_repos() -> reqwest::Result<()> {
+        let repos = GithubRepo::fetch_tgm_template_repos()?;
+        println!("{:?}", repos);
         Ok(())
     }
 }
