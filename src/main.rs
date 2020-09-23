@@ -1,6 +1,6 @@
 mod models;
 
-use crate::models::AppTemplate;
+use crate::models::{AppTemplate, Variable};
 use chrono::{DateTime, Datelike, Local};
 use clap::{App, Arg, SubCommand};
 use colored::*;
@@ -12,6 +12,7 @@ use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
+use regex::Regex;
 
 const VERSION: &str = "0.3.1";
 
@@ -131,8 +132,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
@@ -297,32 +298,19 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     if !app_template.variables.is_empty() {
         println!("Please complete template variables.");
         for v in app_template.variables.iter() {
-            let global_variable = settings.find_variable_value(&v.name);
-            if let Some(variable_value) = global_variable.clone() {
-                print!(
-                    "Define value for variable '{}'({}): {} : {}",
-                    v.name.as_str().green(),
-                    v.description,
-                    variable_value,
-                    ">".blue()
-                );
-            } else {
-                print!(
-                    "Define value for variable '{}'({}){}",
-                    v.name.as_str().green(),
-                    v.description,
-                    ">".blue()
-                );
-            }
-            std::io::stdout().flush().unwrap();
-            let mut input = String::new();
-            std::io::stdin().read_line(&mut input).unwrap();
-            if input.trim().is_empty() {
-                if let Some(variable_value) = global_variable.clone() {
-                    input = variable_value.clone();
+            let mut value = prompt_input_variable(settings, v);
+            // regex pattern match - only once
+            if v.pattern.is_some() {
+                let pattern = v.pattern.clone().unwrap();
+                if let Ok(regex) = Regex::new(&pattern) {
+                    if !regex.is_match(&value) {
+                        let hint = format!("'{}' is illegal, and should match with '{}' regex pattern!", value, pattern);
+                        println!("{}", hint.as_str().red());
+                        value = prompt_input_variable(settings, v);
+                    }
                 }
             }
-            variables.insert(format!("@{}@", v.name), String::from(input.trim()));
+            variables.insert(format!("@{}@", v.name), String::from(value));
         }
         for file in app_template.files.iter() {
             let resource_file = format!("{}/{}", app_dest_dir, file);
@@ -350,6 +338,35 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
                 .unwrap();
         }
     }
+}
+
+fn prompt_input_variable(settings: &Settings, v: &Variable) -> String {
+    let global_variable = settings.find_variable_value(&v.name);
+    if let Some(variable_value) = global_variable.clone() {
+        print!(
+            "Define value for variable '{}'({}): {} : {}",
+            v.name.as_str().green(),
+            v.description,
+            variable_value,
+            ">".blue()
+        );
+    } else {
+        print!(
+            "Define value for variable '{}'({}){}",
+            v.name.as_str().green(),
+            v.description,
+            ">".blue()
+        );
+    }
+    std::io::stdout().flush().unwrap();
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).unwrap();
+    if input.trim().is_empty() {
+        if let Some(variable_value) = global_variable.clone() {
+            input = variable_value.clone();
+        }
+    }
+    input
 }
 
 fn replace_variables(resource_file: &str, variables: &HashMap<String, String>) {
