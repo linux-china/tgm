@@ -14,5 +14,5 @@ args = ["build"]
 [tasks.copy]
 dependencies = ["build"]
 script = ['''
- cp -rf target/release/tgm ~/.cargo/bin/tgm
+ cp -rf target/debug/tgm ~/.cargo/bin/tgm
 ''']
