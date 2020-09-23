@@ -1,6 +1,6 @@
 mod models;
 
-use crate::models::{AppTemplate, Variable};
+use crate::models::{AppTemplate, Variable, GithubRepo};
 use chrono::{DateTime, Datelike, Local};
 use clap::{App, Arg, SubCommand};
 use colored::*;
@@ -66,6 +66,15 @@ fn main() {
                 .help("template name")
                 .required(true),
         );
+    let list_command = SubCommand::with_name("list")
+        .about("list templates")
+        .arg(
+            Arg::with_name("remote")
+                .long("remote")
+                .takes_value(false)
+                .help("remotes template")
+                .required(false),
+        );
     let import_command = SubCommand::with_name("import")
         .about("import template from repository's template.json")
         .arg(
@@ -79,7 +88,7 @@ fn main() {
         .version(VERSION)
         .about("template generator manager: https://github.com/linux-china/tgm")
         .author("linux_china")
-        .subcommand(SubCommand::with_name("list").about("list templates"))
+        .subcommand(list_command)
         .subcommand(SubCommand::with_name("config").about("Config global variables"))
         .subcommand(add_command)
         .subcommand(remove_command)
@@ -90,7 +99,12 @@ fn main() {
     let settings = Settings::load();
     let (sub_command, args_match) = matches.subcommand();
     if sub_command == "list" {
-        list_templates(&settings);
+        let args = args_match.unwrap();
+        if args.is_present("remote") {
+            list_remote_templates();
+        } else {
+            list_templates(&settings);
+        }
     } else if sub_command == "config" {
         config_global_variables();
     } else if sub_command == "add" {
@@ -104,6 +118,9 @@ fn main() {
         let mut url = String::from(args.value_of("name").unwrap());
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             // github template repository
+            if !url.contains("/") { // template from https://github.com/tgm-templates/
+                url = format!("tgm-templates/{}", url);
+            }
             url = format!(
                 "https://raw.githubusercontent.com/{}/master/template.json",
                 url
@@ -132,8 +149,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
@@ -189,6 +206,21 @@ fn list_templates(settings: &Settings) {
                 template.description
             );
         }
+    }
+}
+
+fn list_remote_templates() {
+    if let Ok(repos) = GithubRepo::fetch_tgm_template_repos() {
+        for repo in repos {
+            println!(
+                "{} - {} : {}",
+                repo.name,
+                repo.url,
+                repo.description
+            );
+        }
+    } else {
+        println!("Failed to fetch remote templates");
     }
 }
 
@@ -369,7 +401,7 @@ fn prompt_input_variable(settings: &Settings, v: &Variable) -> String {
             input = variable_value.clone();
         }
     }
-    input
+    String::from(input.trim())
 }
 
 fn replace_variables(resource_file: &str, variables: &HashMap<String, String>) {
