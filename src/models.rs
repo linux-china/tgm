@@ -185,7 +185,7 @@ mod tests {
 
     #[test]
     fn test_fetch_remote_template() -> reqwest::Result<()> {
-        let url = "https://raw.githubusercontent.com/linux-china/spring-boot-java-template/master/template.json";
+        let url = "https://gist.githubusercontent.com/linux-china/50d0ad9db30489951dc66ecfa4fe2785/raw/8cef649356a4b073e4d55e0221eff97f31133522/template.json";
         let app_template = AppTemplate::with_remote(&url).unwrap();
         println!("{:?}", app_template);
         Ok(())
