@@ -23,12 +23,10 @@ Please add template.json file in your template repository, code as following：
   "variables": [
     {
       "name": "groupId",
-      "value": "org.mvnsearch",
       "description": "Maven groupId"
     },
     {
       "name": "artifactId",
-      "value": "spring-boot-demo",
       "description": "Maven artifactId"
     }
   ],
@@ -36,6 +34,16 @@ Please add template.json file in your template repository, code as following：
     "pom.xml","src/main/resources/application.properties"
   ]
 }
+```
+
+**Attention:** You can add regex pattern validation for variable's value like following:
+
+```json
+    {
+      "name": "email",
+      "description": "author email",
+      "pattern": "[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}"
+    }
 ```
 
 In the resource files, such as pom.xml, use template variable as following:
