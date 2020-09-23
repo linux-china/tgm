@@ -23,6 +23,7 @@ pub struct Variable {
     pub name: String,
     pub value: Option<String>,
     pub description: String,
+    pub pattern: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -121,6 +122,7 @@ impl Settings {
             name: String::from(name),
             value: Some(String::from(value)),
             description: String::from(description),
+            pattern: None,
         });
     }
 }
