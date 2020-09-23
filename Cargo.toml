@@ -22,4 +22,5 @@ tokio = { version = "0.2", features = ["full"] }
 reqwest = { version = "0.10", features = ["blocking", "json"] }
 clap = "2.33"
 chrono = "0.4"
+regex = "1.3"
 
