@@ -14,7 +14,7 @@ use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
 
-const VERSION: &str = "0.3.1";
+const VERSION: &str = "0.4.0";
 
 fn main() {
     let add_command = SubCommand::with_name("add")
