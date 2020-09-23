@@ -111,7 +111,7 @@ fn main() {
         } else {
             println!(
                 "{}",
-                "repository's url should start with http:// or https://".red()
+                "😂 Repository's url should start with http:// or https://".red()
             );
         }
         if !url.ends_with("/template.json") {
@@ -154,13 +154,13 @@ fn main() {
         if dest_path.exists() {
             println!(
                 "{}",
-                format!("app created successfully under {} directory!", app_dir)
+                format!("💯 App created successfully under {} directory!", app_dir)
                     .as_str()
                     .green()
             );
         }
     } else {
-        println!("{}", "No subcommand was used".red());
+        println!("{}", "😂 No subcommand was used".red());
     }
 }
 
@@ -235,7 +235,7 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
     if let Some(template) = settings.find_template(&template_name) {
         let dest_path = Path::new(&dest_dir);
         if !dest_path.exists() {
-            println!("Beginning to create app from {}", template.name);
+            println!("🚴 Beginning to create app from {}", template.name);
             let args = vec![
                 "clone",
                 "--depth",
@@ -257,7 +257,7 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
     } else {
         println!(
             "{}",
-            format!("Template not found: {}", template_name)
+            format!("😂 Template not found: {}", template_name)
                 .as_str()
                 .red()
         );
@@ -296,7 +296,7 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
         String::from(std::env::consts::ARCH),
     );
     if !app_template.variables.is_empty() {
-        println!("Please complete template variables.");
+        println!("🤗 Please complete template variables.");
         for v in app_template.variables.iter() {
             let mut value = prompt_input_variable(settings, v);
             // regex pattern match - only once
@@ -305,7 +305,7 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
                 if let Ok(regex) = Regex::new(&pattern) {
                     if !regex.is_match(&value) {
                         let hint = format!(
-                            "'{}' is illegal, and should match with '{}' regex pattern!",
+                            "😅 '{}' is illegal, and should match with '{}' regex pattern!",
                             value, pattern
                         );
                         println!("{}", hint.as_str().red());
@@ -328,7 +328,7 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     if let Some(post_create) = app_template.post_create {
         if !post_create.is_empty() {
             let parts: Vec<&str> = post_create.split(' ').collect();
-            println!("Begin to execute post_create: {}", post_create);
+            println!("🏃 Begin to execute post_create: {}", post_create);
             let mut args: Vec<&str> = vec![];
             if parts.len() > 1 {
                 args = parts[1..].to_vec();
@@ -347,7 +347,7 @@ fn prompt_input_variable(settings: &Settings, v: &Variable) -> String {
     let global_variable = settings.find_variable_value(&v.name);
     if let Some(variable_value) = global_variable.clone() {
         print!(
-            "Define value for variable '{}'({}): {} : {}",
+            "👉 Define value for variable '{}'({}): {} : {}",
             v.name.as_str().green(),
             v.description,
             variable_value,
@@ -355,7 +355,7 @@ fn prompt_input_variable(settings: &Settings, v: &Variable) -> String {
         );
     } else {
         print!(
-            "Define value for variable '{}'({}){}",
+            "👉 Define value for variable '{}'({}){}",
             v.name.as_str().green(),
             v.description,
             ">".blue()
