@@ -1,6 +1,6 @@
 mod models;
 
-use crate::models::{AppTemplate, Variable, GithubRepo};
+use crate::models::{AppTemplate, GithubRepo, Variable};
 use chrono::{DateTime, Datelike, Local};
 use clap::{App, Arg, SubCommand};
 use colored::*;
@@ -66,15 +66,13 @@ fn main() {
                 .help("template name")
                 .required(true),
         );
-    let list_command = SubCommand::with_name("list")
-        .about("list templates")
-        .arg(
-            Arg::with_name("remote")
-                .long("remote")
-                .takes_value(false)
-                .help("remotes template")
-                .required(false),
-        );
+    let list_command = SubCommand::with_name("list").about("list templates").arg(
+        Arg::with_name("remote")
+            .long("remote")
+            .takes_value(false)
+            .help("remotes template")
+            .required(false),
+    );
     let import_command = SubCommand::with_name("import")
         .about("import template from repository's template.json")
         .arg(
@@ -118,7 +116,8 @@ fn main() {
         let mut url = String::from(args.value_of("name").unwrap());
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             // github template repository
-            if !url.contains("/") { // template from https://github.com/tgm-templates/
+            if !url.contains("/") {
+                // template from https://github.com/tgm-templates/
                 url = format!("tgm-templates/{}", url);
             }
             url = format!(
@@ -149,8 +148,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
@@ -212,12 +211,7 @@ fn list_templates(settings: &Settings) {
 fn list_remote_templates() {
     if let Ok(repos) = GithubRepo::fetch_tgm_template_repos() {
         for repo in repos {
-            println!(
-                "{} - {} : {}",
-                repo.name,
-                repo.html_url,
-                repo.description
-            );
+            println!("{} - {} : {}", repo.name, repo.html_url, repo.description);
         }
     } else {
         println!("Failed to fetch remote templates");
@@ -283,13 +277,7 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
         let dest_path = Path::new(&dest_dir);
         if !dest_path.exists() {
             println!("🚴 Beginning to create app from {}", template_name);
-            let args = vec![
-                "clone",
-                "--depth",
-                "1",
-                repo_url.as_str(),
-                app_dir,
-            ];
+            let args = vec!["clone", "--depth", "1", repo_url.as_str(), app_dir];
             match execute_command("git", &args) {
                 Ok(stdout_text) => {
                     println!("{}", stdout_text);

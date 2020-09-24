@@ -1,10 +1,10 @@
+use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
-use reqwest::blocking::Client;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
@@ -48,7 +48,9 @@ pub struct GithubRepo {
 impl GithubRepo {
     pub fn fetch_tgm_template_repos() -> reqwest::Result<Vec<GithubRepo>> {
         let url = "https://api.github.com/orgs/tgm-templates/repos?type=public";
-        let response = Client::builder().build()?.get(url)
+        let response = Client::builder()
+            .build()?
+            .get(url)
             .header("Accept", "application/vnd.github.v3+json")
             .header("User-Agent", "Awesome-tgm-App")
             .send()?;
