@@ -2,7 +2,9 @@ mod models;
 
 use crate::models::{AppTemplate, GithubRepo, Variable};
 use chrono::{DateTime, Datelike, Local};
-use clap::{App, Arg, SubCommand};
+use clap::{App, Arg};
+use clap_generate::generators::Bash;
+use clap_generate::{generate, generators::Zsh};
 use colored::*;
 use models::Settings;
 use regex::Regex;
@@ -16,88 +18,106 @@ use std::process::Stdio;
 
 const VERSION: &str = "0.5.0";
 
-fn main() {
-    let add_command = SubCommand::with_name("add")
+fn build_app() -> App<'static> {
+    let add_command = App::new("add")
         .about("Add template")
         .arg(
-            Arg::with_name("name")
+            Arg::new("name")
                 .long("name") // allow --name
                 .takes_value(true)
-                .help("template name")
+                .about("template name")
                 .required(true),
         )
         .arg(
-            Arg::with_name("repo")
+            Arg::new("repo")
                 .long("repo") // allow --name
                 .takes_value(true)
-                .help("git repository url")
+                .about("git repository url")
                 .required(true),
         )
         .arg(
-            Arg::with_name("desc")
+            Arg::new("desc")
                 .long("desc") // allow --name
                 .takes_value(true)
-                .help("template description")
+                .about("template description")
                 .required(true),
         );
-    let create_command = SubCommand::with_name("create")
+    let create_command = App::new("create")
         .about("create app from template")
         .arg(
-            Arg::with_name("name")
+            Arg::new("name")
                 //.long("name") // allow --name
                 .takes_value(true)
-                .help("template name")
+                .about("template name")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("dir")
+            Arg::new("dir")
                 //.long("dir") // allow --name
                 .takes_value(true)
-                .help("App's directory")
+                .about("App's directory")
                 .required(true)
                 .index(2),
         );
-    let remove_command = SubCommand::with_name("remove")
-        .about("remove template")
-        .arg(
-            Arg::with_name("name")
-                .takes_value(true)
-                .help("template name")
-                .required(true),
-        );
-    let list_command = SubCommand::with_name("list").about("list templates").arg(
-        Arg::with_name("remote")
+    let remove_command = App::new("remove").about("remove template").arg(
+        Arg::new("name")
+            .takes_value(true)
+            .about("template name")
+            .required(true),
+    );
+    let list_command = App::new("list").about("list templates").arg(
+        Arg::new("remote")
             .long("remote")
             .takes_value(false)
-            .help("remotes template")
+            .about("remotes template")
             .required(false),
     );
-    let import_command = SubCommand::with_name("import")
+    let complete_command = App::new("complete")
+        .about("shell completion")
+        .arg(
+            Arg::new("zsh")
+                .long("zsh")
+                .takes_value(false)
+                .about("Zsh completion")
+                .required(false),
+        )
+        .arg(
+            Arg::new("bash")
+                .long("bash")
+                .takes_value(false)
+                .about("Bash completion")
+                .required(false),
+        );
+    let import_command = App::new("import")
         .about("import template from repository's template.json")
         .arg(
-            Arg::with_name("name")
+            Arg::new("name")
                 .takes_value(true)
-                .help("github's repository name or absolute url")
+                .about("github's repository name or absolute url")
                 .required(true),
         );
     // init Clap
-    let matches = App::new("tgm")
+    App::new("tgm")
         .version(VERSION)
         .about("template generator manager: https://github.com/linux-china/tgm")
         .author("linux_china")
         .subcommand(list_command)
-        .subcommand(SubCommand::with_name("config").about("Config global variables"))
+        .subcommand(App::new("config").about("Config global variables"))
+        .subcommand(complete_command)
         .subcommand(add_command)
         .subcommand(remove_command)
         .subcommand(import_command)
         .subcommand(create_command)
-        .get_matches();
+}
+
+fn main() {
+    let app = build_app();
+    let matches = app.get_matches();
 
     let settings = Settings::load();
-    let (sub_command, args_match) = matches.subcommand();
+    let (sub_command, args) = matches.subcommand().unwrap();
     if sub_command == "list" {
-        let args = args_match.unwrap();
         if args.is_present("remote") {
             list_remote_templates(&settings);
         } else {
@@ -105,14 +125,18 @@ fn main() {
         }
     } else if sub_command == "config" {
         config_global_variables();
+    } else if sub_command == "complete" {
+        if args.is_present("zsh") {
+            generate::<Zsh, _>(&mut build_app(), "tgm", &mut std::io::stdout());
+        } else if args.is_present("bash") {
+            generate::<Bash, _>(&mut build_app(), "tgm", &mut std::io::stdout());
+        }
     } else if sub_command == "add" {
-        let args = args_match.unwrap();
         let name = args.value_of("name").unwrap();
         let repo = args.value_of("repo").unwrap();
         let desc = args.value_of("desc").unwrap();
         add_template(name, repo, desc);
     } else if sub_command == "import" {
-        let args = args_match.unwrap();
         let mut url = String::from(args.value_of("name").unwrap());
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             // github template repository
@@ -148,17 +172,15 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
     } else if sub_command == "remove" {
-        let args = args_match.unwrap();
         let name = args.value_of("name").unwrap();
         delete_template(name);
     } else if sub_command == "create" {
-        let args = args_match.unwrap();
         let template_name = args.value_of("name").unwrap();
         let app_dir = args.value_of("dir").unwrap();
         println!("{}:{}", template_name, app_dir);
