@@ -99,7 +99,7 @@ fn main() {
     if sub_command == "list" {
         let args = args_match.unwrap();
         if args.is_present("remote") {
-            list_remote_templates();
+            list_remote_templates(&settings);
         } else {
             list_templates(&settings);
         }
@@ -208,8 +208,9 @@ fn list_templates(settings: &Settings) {
     }
 }
 
-fn list_remote_templates() {
-    if let Ok(repos) = GithubRepo::fetch_tgm_template_repos() {
+fn list_remote_templates(settings: &Settings) {
+    let org_name = get_central(settings);
+    if let Ok(repos) = GithubRepo::fetch_tgm_template_repos(&org_name) {
         for repo in repos {
             println!("{} - {} : {}", repo.name, repo.html_url, repo.description);
         }
@@ -256,6 +257,14 @@ fn config_global_variables() {
     settings.flush();
 }
 
+fn get_central(settings: &Settings) -> String {
+    let mut org_name = String::from("tgm-templates");
+    if settings.central.is_some() {
+        org_name = settings.central.clone().unwrap();
+    }
+    org_name
+}
+
 fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings: &Settings) {
     let dest_dir = format!("{}/{}", workspace_dir, app_dir);
     let mut repo_url: String = String::new();
@@ -263,7 +272,8 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
         repo_url = template.repository.clone();
     } else {
         // load template from https://github.com/tgm-templates/
-        if let Ok(repos) = GithubRepo::fetch_tgm_template_repos() {
+        let org_name = get_central(settings);
+        if let Ok(repos) = GithubRepo::fetch_tgm_template_repos(&org_name) {
             for repo in repos {
                 if repo.name == template_name {
                     repo_url = repo.html_url.clone();

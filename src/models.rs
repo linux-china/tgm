@@ -8,6 +8,8 @@ use std::path::Path;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub central: Option<String>,
     pub templates: Vec<Template>,
     pub variables: Vec<Variable>,
 }
@@ -22,8 +24,10 @@ pub struct Template {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Variable {
     pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub value: Option<String>,
     pub description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub pattern: Option<String>,
 }
 
@@ -32,6 +36,7 @@ pub struct AppTemplate {
     pub name: String,
     pub repository: String,
     pub description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub post_create: Option<String>,
     pub variables: Vec<Variable>,
     pub files: Vec<String>,
@@ -46,11 +51,11 @@ pub struct GithubRepo {
 }
 
 impl GithubRepo {
-    pub fn fetch_tgm_template_repos() -> reqwest::Result<Vec<GithubRepo>> {
-        let url = "https://api.github.com/orgs/tgm-templates/repos?type=public";
+    pub fn fetch_tgm_template_repos(org_name: &str) -> reqwest::Result<Vec<GithubRepo>> {
+        let url = format!("https://api.github.com/orgs/{}/repos?type=public", org_name);
         let response = Client::builder()
             .build()?
-            .get(url)
+            .get(&url)
             .header("Accept", "application/vnd.github.v3+json")
             .header("User-Agent", "Awesome-tgm-App")
             .send()?;
@@ -69,6 +74,7 @@ impl Settings {
             serde_json::from_str(setting_json.as_str()).unwrap()
         } else {
             Settings {
+                central: None,
                 templates: vec![],
                 variables: vec![],
             }
@@ -215,7 +221,7 @@ mod tests {
 
     #[test]
     fn test_github_repos() -> reqwest::Result<()> {
-        let repos = GithubRepo::fetch_tgm_template_repos()?;
+        let repos = GithubRepo::fetch_tgm_template_repos("tgm-templates")?;
         println!("{:?}", repos);
         Ok(())
     }
