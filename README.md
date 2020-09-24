@@ -101,6 +101,22 @@ $ tgm remove spring-boot-java
 $ tgm create spring-boot-java spring-demo1 
 ```
 
+# shell completion
+
+### oh-my-zsh
+
+```
+$ mkdir -p ~/.oh-my-zsh/custom/plugins/tgm
+$ cd ~/.oh-my-zsh/custom/plugins/tgm
+$ tgm complete --zsh > _tgm
+```
+
+Modify .zshrc and add 'tgm' in plugins array.
+
+```
+plugins(tgm ...
+```
+
 # References
 
 * Command line utilities: https://lib.rs/command-line-utilities
