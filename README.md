@@ -117,6 +117,13 @@ Modify .zshrc and add 'tgm' in plugins array.
 plugins(tgm ...
 ```
 
+### bash
+
+```
+$ tgm complete --bash > tgm-completion.bash
+$ source ./tgm-completion.bash 
+```
+
 # References
 
 * Command line utilities: https://lib.rs/command-line-utilities
