@@ -1,0 +1,8 @@
+GET https://api.github.com/
+Accept: application/vnd.github.v3+json
+
+
+### list repos
+GET https://api.github.com/orgs/tgm-templates/repos?type=public
+Accept: application/vnd.github.v3+json
+
