@@ -392,12 +392,18 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
 
 fn prompt_input_variable(settings: &Settings, v: &Variable) -> String {
     let global_variable = settings.find_variable_value(&v.name);
-    if let Some(variable_value) = global_variable.clone() {
+    let mut default_value = String::new();
+    if global_variable.is_some() {
+        default_value = global_variable.clone().unwrap();
+    } else if v.value.is_some() {
+        default_value = v.value.clone().unwrap();
+    }
+    if !default_value.is_empty() {
         print!(
             "👉 Define value for variable '{}'({}): {} : {}",
             v.name.as_str().green(),
             v.description,
-            variable_value,
+            default_value,
             ">".blue()
         );
     } else {
