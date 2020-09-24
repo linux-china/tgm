@@ -215,7 +215,7 @@ fn list_remote_templates() {
             println!(
                 "{} - {} : {}",
                 repo.name,
-                repo.url,
+                repo.html_url,
                 repo.description
             );
         }
@@ -264,15 +264,30 @@ fn config_global_variables() {
 
 fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings: &Settings) {
     let dest_dir = format!("{}/{}", workspace_dir, app_dir);
+    let mut repo_url: String = String::new();
     if let Some(template) = settings.find_template(&template_name) {
+        repo_url = template.repository.clone();
+    } else {
+        // load template from https://github.com/tgm-templates/
+        if let Ok(repos) = GithubRepo::fetch_tgm_template_repos() {
+            for repo in repos {
+                if repo.name == template_name {
+                    repo_url = repo.html_url.clone();
+                    break;
+                }
+            }
+        }
+    }
+    println!("repo: {}", repo_url);
+    if !repo_url.is_empty() {
         let dest_path = Path::new(&dest_dir);
         if !dest_path.exists() {
-            println!("🚴 Beginning to create app from {}", template.name);
+            println!("🚴 Beginning to create app from {}", template_name);
             let args = vec![
                 "clone",
                 "--depth",
                 "1",
-                template.repository.as_str(),
+                repo_url.as_str(),
                 app_dir,
             ];
             match execute_command("git", &args) {
