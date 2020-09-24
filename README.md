@@ -74,11 +74,12 @@ $ tgm create spring-boot-java spring-app-demo
 
 # tgm commands:
 
-* list: list all templates
+* list: list local templates
+* list --remote:  list templates from https://github.com/tgm-templates/
 * add: add new template from github template repository or manual
 
 ```
-$ tgm add spring-boot-java https://github.com/linux-china/spring-boot-java-template.git
+$ tgm add --name spring-boot-java --repo https://github.com/linux-china/spring-boot-java-template.git --desc "Spring Boot Java template"
 ```
 
 * import template from github's repository
