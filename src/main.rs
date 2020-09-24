@@ -60,12 +60,14 @@ fn build_app() -> App<'static> {
                 .required(true)
                 .index(2),
         );
-    let remove_command = App::new("remove").about("Remove template from local settings").arg(
-        Arg::new("name")
-            .takes_value(true)
-            .about("template name")
-            .required(true),
-    );
+    let remove_command = App::new("remove")
+        .about("Remove template from local settings")
+        .arg(
+            Arg::new("name")
+                .takes_value(true)
+                .about("template name")
+                .required(true),
+        );
     let list_command = App::new("list").about("List templates").arg(
         Arg::new("remote")
             .long("remote")
@@ -171,8 +173,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
@@ -237,7 +239,13 @@ fn list_remote_templates(settings: &Settings) {
     if let Ok(repos) = GithubRepo::fetch_tgm_template_repos(&org_name) {
         let mut i = 1;
         for repo in repos {
-            println!("{}. {} - {} : {}", i, repo.name.as_str().blue(), repo.html_url, repo.description);
+            println!(
+                "{}. {} - {} : {}",
+                i,
+                repo.name.as_str().blue(),
+                repo.html_url,
+                repo.description
+            );
             i = i + 1;
         }
     } else {
