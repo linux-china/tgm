@@ -43,7 +43,7 @@ fn build_app() -> App<'static> {
                 .required(true),
         );
     let create_command = App::new("create")
-        .about("create app from template")
+        .about("Create app from template")
         .arg(
             Arg::new("name")
                 //.long("name") // allow --name
@@ -60,13 +60,13 @@ fn build_app() -> App<'static> {
                 .required(true)
                 .index(2),
         );
-    let remove_command = App::new("remove").about("remove template").arg(
+    let remove_command = App::new("remove").about("Remove template from local settings").arg(
         Arg::new("name")
             .takes_value(true)
             .about("template name")
             .required(true),
     );
-    let list_command = App::new("list").about("list templates").arg(
+    let list_command = App::new("list").about("List templates").arg(
         Arg::new("remote")
             .long("remote")
             .takes_value(false)
@@ -74,7 +74,7 @@ fn build_app() -> App<'static> {
             .required(false),
     );
     let complete_command = App::new("complete")
-        .about("shell completion")
+        .about("Generate shell completion for zsh & bash")
         .arg(
             Arg::new("zsh")
                 .long("zsh")
@@ -90,7 +90,7 @@ fn build_app() -> App<'static> {
                 .required(false),
         );
     let import_command = App::new("import")
-        .about("import template from repository's template.json")
+        .about("Import template from repository's template.json")
         .arg(
             Arg::new("name")
                 .takes_value(true)
@@ -100,8 +100,7 @@ fn build_app() -> App<'static> {
     // init Clap
     App::new("tgm")
         .version(VERSION)
-        .about("template generator manager: https://github.com/linux-china/tgm")
-        .author("linux_china")
+        .about("Template generator manager: https://github.com/linux-china/tgm")
         .subcommand(list_command)
         .subcommand(App::new("config").about("Config global variables"))
         .subcommand(complete_command)
