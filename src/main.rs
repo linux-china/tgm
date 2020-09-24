@@ -218,13 +218,16 @@ fn list_templates(settings: &Settings) {
             "add or import".green()
         );
     } else {
+        let mut i = 1;
         for template in settings.templates.iter() {
             println!(
-                "{} - {} : {}",
+                "{}. {} - {} : {}",
+                i,
                 template.name.as_str().blue(),
                 template.repository,
                 template.description
             );
+            i = i + 1;
         }
     }
 }
@@ -232,8 +235,10 @@ fn list_templates(settings: &Settings) {
 fn list_remote_templates(settings: &Settings) {
     let org_name = get_central(settings);
     if let Ok(repos) = GithubRepo::fetch_tgm_template_repos(&org_name) {
+        let mut i = 1;
         for repo in repos {
-            println!("{} - {} : {}", repo.name, repo.html_url, repo.description);
+            println!("{}. {} - {} : {}", i, repo.name.as_str().blue(), repo.html_url, repo.description);
+            i = i + 1;
         }
     } else {
         println!("Failed to fetch remote templates");
@@ -388,8 +393,8 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
     }
     std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
     // re-init
-    execute_command("rm", &["-rf", ".git"]).unwrap();
-    execute_command("git", &["init"]).unwrap();
+    execute_command("rm", &["-rf", ".git"]).unwrap_or(String::new());
+    execute_command("git", &["init"]).unwrap_or(String::new());
     // post create
     if let Some(post_create) = app_template.post_create {
         if !post_create.is_empty() {
@@ -407,6 +412,8 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
                 .unwrap();
         }
     }
+    // delete template.json
+    execute_command("rm", &["-rf", "template.json"]).unwrap_or(String::new());
 }
 
 fn prompt_input_variable(settings: &Settings, v: &Variable) -> String {
