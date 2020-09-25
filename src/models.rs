@@ -38,8 +38,8 @@ pub struct AppTemplate {
     pub description: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub post_create: Option<String>,
-    pub variables: Vec<Variable>,
-    pub files: Vec<String>,
+    pub variables: Option<Vec<Variable>>,
+    pub files: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -189,8 +189,8 @@ impl Default for AppTemplate {
             name: String::from("unknown"),
             description: String::from("not available"),
             repository: String::from("not available"),
-            variables: vec![],
-            files: vec![],
+            variables: Option::None,
+            files: Option::None,
             post_create: Some(String::from("Desc absent")),
         }
     }
