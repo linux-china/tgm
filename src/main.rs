@@ -184,12 +184,15 @@ fn main() {
     } else if sub_command == "create" {
         let template_name = args.value_of("name").unwrap();
         let app_dir = args.value_of("dir").unwrap();
-        println!("{}:{}", template_name, app_dir);
         let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
-        create_app(template_name, &current_dir, app_dir, &settings);
-        //check app created or not
         let dest_dir = format!("{}/{}", current_dir, app_dir);
         let dest_path = Path::new(&dest_dir);
+        if dest_path.exists() {
+            println!("😂  '{}' directory exits already!", app_dir);
+            return;
+        }
+        create_app(template_name, &current_dir, app_dir, &settings);
+        //check app created or not
         if dest_path.exists() {
             println!(
                 "{}",
@@ -318,17 +321,14 @@ fn create_app(template_name: &str, workspace_dir: &str, app_dir: &str, settings:
     }
     println!("repo: {}", repo_url);
     if !repo_url.is_empty() {
-        let dest_path = Path::new(&dest_dir);
-        if !dest_path.exists() {
-            println!("🚴 Beginning to create app from {}", template_name);
-            let args = vec!["clone", "--depth", "1", repo_url.as_str(), app_dir];
-            match execute_command("git", &args) {
-                Ok(stdout_text) => {
-                    println!("{}", stdout_text);
-                }
-                Err(e) => {
-                    println!("{}", e.as_str().red());
-                }
+        println!("🚴 Beginning to create app from {}", template_name);
+        let args = vec!["clone", "--depth", "1", repo_url.as_str(), app_dir];
+        match execute_command("git", &args) {
+            Ok(stdout_text) => {
+                println!("{}", stdout_text);
+            }
+            Err(e) => {
+                println!("{}", e.as_str().red());
             }
         }
         // template variables input
@@ -374,9 +374,9 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
         String::from("os_arch"),
         String::from(std::env::consts::ARCH),
     );
-    if !app_template.variables.is_empty() {
+    if app_template.variables.is_some() {
         println!("🤗 Please complete template variables.");
-        for v in app_template.variables.iter() {
+        for v in app_template.variables.unwrap().iter() {
             let mut value = prompt_input_variable(settings, v);
             // regex pattern match - only once
             if v.pattern.is_some() {
@@ -394,9 +394,11 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
             }
             variables.insert(format!("@{}@", v.name), String::from(value));
         }
-        for file in app_template.files.iter() {
-            let resource_file = format!("{}/{}", app_dest_dir, file);
-            replace_variables(&resource_file, &variables);
+        if app_template.files.is_some() {
+            for file in app_template.files.unwrap().iter() {
+                let resource_file = format!("{}/{}", app_dest_dir, file);
+                replace_variables(&resource_file, &variables);
+            }
         }
     }
     std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
