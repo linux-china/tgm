@@ -16,7 +16,7 @@ use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
 
-const VERSION: &str = "0.6.0";
+const VERSION: &str = "0.7.0";
 
 fn build_app() -> App<'static> {
     let add_command = App::new("add")
