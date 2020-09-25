@@ -59,7 +59,11 @@ impl GithubRepo {
             .header("Accept", "application/vnd.github.v3+json")
             .header("User-Agent", "Awesome-tgm-App")
             .send()?;
-        response.json::<Vec<GithubRepo>>()
+        let mut repos = response.json::<Vec<GithubRepo>>()?;
+        if repos.len() >= 2 {
+            repos.sort_by(|a, b| a.name.cmp(&b.name));
+        }
+        Ok(repos)
     }
 }
 
@@ -71,7 +75,14 @@ impl Settings {
         if file_path.exists() {
             let setting_json =
                 fs::read_to_string(setting_json_path).expect("Failed to read ~/.tgm/settings.json");
-            serde_json::from_str(setting_json.as_str()).unwrap()
+            let mut settings: Settings = serde_json::from_str(setting_json.as_str()).unwrap();
+            if settings.templates.len() > 1 {
+                settings.templates.sort_by(|a, b| a.name.cmp(&b.name));
+            }
+            if settings.variables.len() > 1 {
+                settings.variables.sort_by(|a, b| a.name.cmp(&b.name));
+            }
+            settings
         } else {
             Settings {
                 central: None,
