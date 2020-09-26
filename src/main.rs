@@ -11,7 +11,7 @@ use licenses::get_license;
 use models::Settings;
 use regex::Regex;
 use std::collections::HashMap;
-use std::fs;
+use std::{fs, env};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -94,7 +94,13 @@ fn build_app() -> App<'static> {
                 .takes_value(false)
                 .about("Zsh completion")
                 .required(false),
-        )
+        ).arg(
+        Arg::new("oh_my_zsh")
+            .long("oh_my_zsh")
+            .takes_value(false)
+            .about("Oh My Zsh")
+            .required(false),
+    )
         .arg(
             Arg::new("bash")
                 .long("bash")
@@ -229,6 +235,16 @@ fn main() {
             generate::<Zsh, _>(&mut build_app(), "tgm", &mut std::io::stdout());
         } else if args.is_present("bash") {
             generate::<Bash, _>(&mut build_app(), "tgm", &mut std::io::stdout());
+        } else if args.is_present("oh_my_zsh") {
+            let home = env::var("HOME").unwrap();
+            let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
+            let result = std::fs::create_dir_all(Path::new(&dest_dir));
+            if result.is_ok() {
+                let mut file = File::create("_tgm").unwrap();
+                generate::<Zsh, _>(&mut build_app(), "tgm", &mut file);
+            } else {
+                println!("Failed to create directory: {}", &dest_dir);
+            }
         }
     } else if sub_command == "add" {
         let name = args.value_of("name").unwrap();
@@ -271,8 +287,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
