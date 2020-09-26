@@ -217,7 +217,7 @@ fn main() {
             ""
         };
         if license_type.is_empty() {
-            println!("Unknown license type".red());
+            println!("{}", "Unknown license type".red());
             return;
         }
         let license_text = get_license(license_type, author_name);
