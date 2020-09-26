@@ -11,12 +11,12 @@ use licenses::get_license;
 use models::Settings;
 use regex::Regex;
 use std::collections::HashMap;
-use std::{fs, env};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
+use std::{env, fs};
 
 const VERSION: &str = "0.8.0";
 
@@ -94,13 +94,14 @@ fn build_app() -> App<'static> {
                 .takes_value(false)
                 .about("Zsh completion")
                 .required(false),
-        ).arg(
-        Arg::new("oh_my_zsh")
-            .long("oh_my_zsh")
-            .takes_value(false)
-            .about("Oh My Zsh")
-            .required(false),
-    )
+        )
+        .arg(
+            Arg::new("oh_my_zsh")
+                .long("oh_my_zsh")
+                .takes_value(false)
+                .about("Oh My Zsh")
+                .required(false),
+        )
         .arg(
             Arg::new("bash")
                 .long("bash")
@@ -287,8 +288,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
