@@ -1,10 +1,10 @@
+mod app;
 mod licenses;
 mod models;
-mod app;
 
-use crate::models::{Settings, AppTemplate, GithubRepo, Variable};
-use crate::app::{build_app};
-use crate::licenses::{get_license};
+use crate::app::build_app;
+use crate::licenses::get_license;
+use crate::models::{AppTemplate, GithubRepo, Settings, Variable};
 use chrono::{DateTime, Datelike, Local};
 use clap_generate::generators::Bash;
 use clap_generate::{generate, generators::Zsh};
@@ -17,7 +17,6 @@ use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
 use std::{env, fs};
-
 
 fn main() {
     let app = build_app();
@@ -78,8 +77,19 @@ fn main() {
             let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
             let result = std::fs::create_dir_all(Path::new(&dest_dir));
             if result.is_ok() {
+                // write _tgm file to plugin directory
                 let mut file = File::create("_tgm").unwrap();
                 generate::<Zsh, _>(&mut build_app(), "tgm", &mut file);
+                // read .zshrc add enable tgm plugin
+                let zshrc_dest = format!("{}/.zshrc", home);
+                let zshrc_text =
+                    fs::read_to_string(Path::new(&zshrc_dest)).expect("Failed to read ~/.zshrc");
+                if !zshrc_text.contains("(tgm ") && !zshrc_text.contains(" tgm ") {
+                    let new_zshrc_text = zshrc_text.replacen("plugins=(", "plugins=(tgm ", 3);
+                    let mut zshrc_file = File::create(Path::new(&zshrc_dest)).unwrap();
+                    zshrc_file.write_all(new_zshrc_text.as_bytes()).unwrap();
+                }
+                println!("💯 tgm for oh-my-zsh installed successfully! Please open a new console tab to make it work.")
             } else {
                 println!("Failed to create directory: {}", &dest_dir);
             }
@@ -125,8 +135,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
