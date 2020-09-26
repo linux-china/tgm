@@ -1,6 +1,6 @@
 [package]
 name = "tgm"
-version = "0.7.0"
+version = "0.8.0"
 edition = "2018"
 authors = ["linux_china <libing.chen@gmail.com>"]
 description = "CLI to manage template repositories"
