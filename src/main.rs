@@ -1,3 +1,4 @@
+mod licenses;
 mod models;
 
 use crate::models::{AppTemplate, GithubRepo, Variable};
@@ -6,6 +7,7 @@ use clap::{App, Arg};
 use clap_generate::generators::Bash;
 use clap_generate::{generate, generators::Zsh};
 use colored::*;
+use licenses::get_license;
 use models::Settings;
 use regex::Regex;
 use std::collections::HashMap;
@@ -75,13 +77,15 @@ fn build_app() -> App<'static> {
             .about("remotes template")
             .required(false),
     );
-    let config_command = App::new("config").about("Show/config global variables").arg(
-        Arg::new("edit")
-            .long("edit")
-            .takes_value(false)
-            .about("edit global variables ")
-            .required(false),
-    );
+    let config_command = App::new("config")
+        .about("Show/config global variables")
+        .arg(
+            Arg::new("edit")
+                .long("edit")
+                .takes_value(false)
+                .about("edit global variables ")
+                .required(false),
+        );
     let complete_command = App::new("complete")
         .about("Generate shell completion for zsh & bash")
         .arg(
@@ -106,13 +110,64 @@ fn build_app() -> App<'static> {
                 .about("github's repository name or absolute url")
                 .required(true),
         );
+    let license_command = App::new("license")
+        .about("Generate LICENSE file")
+        .arg(
+            Arg::new("apache2")
+                .long("apache2")
+                .takes_value(false)
+                .about("Apache License 2.0")
+                .required(false),
+        )
+        .arg(
+            Arg::new("mit")
+                .long("mit")
+                .takes_value(false)
+                .about("MIT License")
+                .required(false),
+        )
+        .arg(
+            Arg::new("isc")
+                .long("isc")
+                .takes_value(false)
+                .about("ISC License")
+                .required(false),
+        )
+        .arg(
+            Arg::new("gplv3")
+                .long("gplv3")
+                .takes_value(false)
+                .about("GNU GPLv3 ")
+                .required(false),
+        )
+        .arg(
+            Arg::new("lgplv3")
+                .long("lgplv3")
+                .takes_value(false)
+                .about("GNU LGPLv3")
+                .required(false),
+        )
+        .arg(
+            Arg::new("mozilla2")
+                .long("mozilla2")
+                .takes_value(false)
+                .about("Mozilla Public License 2.0")
+                .required(false),
+        )
+        .arg(
+            Arg::new("author")
+                .long("author")
+                .takes_value(true)
+                .about("Author name")
+                .required(true),
+        );
     // init Clap
     App::new("tgm")
         .version(VERSION)
         .about("Template generator manager: https://github.com/linux-china/tgm")
         .subcommand(list_command)
         .subcommand(config_command)
-        .subcommand(App::new("license").about("Generate LICENSE file"))
+        .subcommand(license_command)
         .subcommand(complete_command)
         .subcommand(add_command)
         .subcommand(remove_command)
@@ -124,7 +179,10 @@ fn main() {
     let app = build_app();
     let matches = app.get_matches();
     if matches.subcommand().is_none() {
-        println!("{}", "😂 Please use subcommand or --help to display help!".red());
+        println!(
+            "{}",
+            "😂 Please use subcommand or --help to display help!".red()
+        );
         return;
     }
     let settings = Settings::load();
@@ -141,6 +199,31 @@ fn main() {
         } else {
             show_global_variables(&settings);
         }
+    } else if sub_command == "license" {
+        let author_name = args.value_of("author").unwrap_or("Anonymous");
+        let license_type = if args.is_present("apache2") {
+            "apache2"
+        } else if args.is_present("mit") {
+            "mit"
+        } else if args.is_present("isc") {
+            "isc"
+        } else if args.is_present("gplv3") {
+            "gplv3"
+        } else if args.is_present("lgplv3") {
+            "lgplv3"
+        } else if args.is_present("mozilla2") {
+            "mozilla2"
+        } else {
+            ""
+        };
+        if license_type.is_empty() {
+            println!("Unknown license type".red());
+            return;
+        }
+        let license_text = get_license(license_type, author_name);
+        let mut license_file = File::create(Path::new("LICENSE")).unwrap();
+        license_file.write_all(license_text.as_bytes()).unwrap();
+        println!("📄 LICENSE file created!")
     } else if sub_command == "complete" {
         if args.is_present("zsh") {
             generate::<Zsh, _>(&mut build_app(), "tgm", &mut std::io::stdout());
@@ -188,8 +271,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
