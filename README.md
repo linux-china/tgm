@@ -106,9 +106,7 @@ $ tgm create spring-boot-java spring-demo1
 ### oh-my-zsh
 
 ```
-$ mkdir -p ~/.oh-my-zsh/custom/plugins/tgm
-$ cd ~/.oh-my-zsh/custom/plugins/tgm
-$ tgm complete --zsh > _tgm
+$ tgm complete --oh_my_zsh
 ```
 
 Modify .zshrc and add 'tgm' in plugins array.
