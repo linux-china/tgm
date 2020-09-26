@@ -18,7 +18,7 @@ use std::process::Command;
 use std::process::Stdio;
 use std::{env, fs};
 
-const VERSION: &str = "0.8.0";
+const VERSION: &str = "0.8.1";
 
 fn build_app() -> App<'static> {
     let add_command = App::new("add")
