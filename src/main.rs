@@ -75,6 +75,13 @@ fn build_app() -> App<'static> {
             .about("remotes template")
             .required(false),
     );
+    let config_command = App::new("config").about("Show/config global variables").arg(
+        Arg::new("edit")
+            .long("edit")
+            .takes_value(false)
+            .about("edit global variables ")
+            .required(false),
+    );
     let complete_command = App::new("complete")
         .about("Generate shell completion for zsh & bash")
         .arg(
@@ -104,7 +111,8 @@ fn build_app() -> App<'static> {
         .version(VERSION)
         .about("Template generator manager: https://github.com/linux-china/tgm")
         .subcommand(list_command)
-        .subcommand(App::new("config").about("Config global variables"))
+        .subcommand(config_command)
+        .subcommand(App::new("license").about("Generate LICENSE file"))
         .subcommand(complete_command)
         .subcommand(add_command)
         .subcommand(remove_command)
@@ -115,7 +123,10 @@ fn build_app() -> App<'static> {
 fn main() {
     let app = build_app();
     let matches = app.get_matches();
-
+    if matches.subcommand().is_none() {
+        println!("{}", "😂 Please use subcommand or --help to display help!".red());
+        return;
+    }
     let settings = Settings::load();
     let (sub_command, args) = matches.subcommand().unwrap();
     if sub_command == "list" {
@@ -125,7 +136,11 @@ fn main() {
             list_templates(&settings);
         }
     } else if sub_command == "config" {
-        config_global_variables();
+        if args.is_present("edit") {
+            config_global_variables();
+        } else {
+            show_global_variables(&settings);
+        }
     } else if sub_command == "complete" {
         if args.is_present("zsh") {
             generate::<Zsh, _>(&mut build_app(), "tgm", &mut std::io::stdout());
@@ -173,8 +188,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
@@ -202,7 +217,8 @@ fn main() {
             );
         }
     } else {
-        println!("{}", "😂 No subcommand was used".red());
+        let hint = format!("😂 Unknown sub command: {}", sub_command);
+        println!("{}", hint.as_str().red());
     }
 }
 
@@ -256,11 +272,21 @@ fn list_remote_templates(settings: &Settings) {
     }
 }
 
+fn show_global_variables(settings: &Settings) {
+    println!("======Global Variables=========");
+    for variable in settings.variables.iter() {
+        if variable.value.is_some() {
+            println!("{}: {}", &variable.name, variable.value.clone().unwrap());
+        }
+    }
+}
+
 fn config_global_variables() {
     let variable_names = vec![
         ("author_name", "author's name"),
         ("author_email", "author's email"),
         ("github_user_name", "author's Github user name"),
+        ("open_source_license", "Open Source License"),
     ];
     let mut settings = Settings::load();
     for pair in variable_names.iter() {
