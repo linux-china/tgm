@@ -102,11 +102,6 @@ $ tgm create spring-boot-java spring-demo1
 ```
 
 # Shell completion
-It's simple, just execute:
-
-```
-source < (tgm complete --zsh) 
-```
 
 ### oh-my-zsh
 
@@ -114,11 +109,7 @@ source < (tgm complete --zsh)
 $ tgm complete --oh_my_zsh
 ```
 
-Modify .zshrc and add 'tgm' in plugins array.
-
-```
-plugins(tgm ...
-```
+tgm will add tgm to plugins in ~/.zshrc.
 
 ### bash
 
