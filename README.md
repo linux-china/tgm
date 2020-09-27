@@ -101,7 +101,12 @@ $ tgm remove spring-boot-java
 $ tgm create spring-boot-java spring-demo1 
 ```
 
-# shell completion
+# Shell completion
+It's simple, just execute:
+
+```
+source < (tgm complete --zsh) 
+```
 
 ### oh-my-zsh
 
