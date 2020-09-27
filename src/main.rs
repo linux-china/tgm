@@ -135,8 +135,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
@@ -220,12 +220,19 @@ fn list_remote_templates(settings: &Settings) {
 }
 
 fn show_global_variables(settings: &Settings) {
-    println!("======Global Variables=========");
+    println!("======Global customized variables=========");
     for variable in settings.variables.iter() {
         if variable.value.is_some() {
             println!("{}: {}", &variable.name, variable.value.clone().unwrap());
         }
     }
+    println!("======Injected variables==============");
+    let now: DateTime<Local> = Local::now();
+    println!("current_year: {}", now.year().to_string());
+    println!("current_date: {}", now.format("%m/%d/%Y").to_string());
+    println!("os_name: {}", String::from(std::env::consts::OS));
+    println!("os_family: {}", String::from(std::env::consts::FAMILY));
+    println!("os_arch: {}", String::from(std::env::consts::ARCH));
 }
 
 fn config_global_variables() {
