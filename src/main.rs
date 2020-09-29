@@ -1,3 +1,4 @@
+//! tgm: Template Generator Manager
 mod app;
 mod licenses;
 mod models;
