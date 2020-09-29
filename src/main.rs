@@ -1,3 +1,4 @@
+#![doc(html_logo_url = "https://avatars2.githubusercontent.com/u/71794210?s=200&v=4")]
 //! tgm: Template Generator Manager
 mod app;
 mod licenses;
