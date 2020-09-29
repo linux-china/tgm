@@ -1,3 +1,4 @@
+//! clap App for command cli
 use clap::{App, Arg};
 
 const VERSION: &str = "0.8.1";
