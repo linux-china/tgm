@@ -1,5 +1,7 @@
+#![feature(external_doc)]
 #![doc(html_logo_url = "https://avatars2.githubusercontent.com/u/71794210?s=200&v=4")]
-//! tgm: Template Generator Manager
+#![doc(include = "../README.md")]
+
 mod app;
 mod licenses;
 mod models;
