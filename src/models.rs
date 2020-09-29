@@ -1,3 +1,4 @@
+//! models in tgm
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -6,6 +7,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
+/// tgm Settings
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -14,6 +16,7 @@ pub struct Settings {
     pub variables: Vec<Variable>,
 }
 
+/// tgm Template
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Template {
     pub name: String,
@@ -21,6 +24,7 @@ pub struct Template {
     pub description: String,
 }
 
+/// template Variable
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Variable {
     pub name: String,
@@ -31,6 +35,7 @@ pub struct Variable {
     pub pattern: Option<String>,
 }
 
+/// Application template
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AppTemplate {
     pub name: String,
@@ -42,6 +47,7 @@ pub struct AppTemplate {
     pub files: Option<Vec<String>>,
 }
 
+/// Github Repository
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GithubRepo {
     pub name: String,
