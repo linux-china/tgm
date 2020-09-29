@@ -7,7 +7,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-/// tgm Settings
+/// tgm Settings to include [Template] and [Variable]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
     #[serde(skip_serializing_if = "Option::is_none")]
