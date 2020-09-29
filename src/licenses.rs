@@ -1,3 +1,4 @@
+//! Open source licenses for Apache License 2.0, MIT License, ISC License, GNU GPLv3, GNU LGPLv3 and Mozilla Public License 2.0
 use chrono::{DateTime, Datelike, Local};
 
 pub fn get_license(license_name: &str, author_name: &str) -> String {
