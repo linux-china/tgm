@@ -139,8 +139,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                        .as_str()
-                        .red()
+                    .as_str()
+                    .red()
                 );
             }
         }
