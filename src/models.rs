@@ -75,8 +75,8 @@ impl GithubRepo {
 
 impl Settings {
     pub fn load() -> Settings {
-        let home = env::var("HOME").unwrap();
-        let setting_json_path = home + "/.tgm/settings.json";
+        let home = env!("HOME");
+        let setting_json_path = format!("{}/.tgm/settings.json", home);
         let file_path = Path::new(&setting_json_path);
         if file_path.exists() {
             let setting_json =
