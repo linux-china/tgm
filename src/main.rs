@@ -82,7 +82,8 @@ fn main() {
             let result = std::fs::create_dir_all(Path::new(&dest_dir));
             if result.is_ok() {
                 // write _tgm file to plugin directory
-                let mut file = File::create("_tgm").unwrap();
+                let dest_file = format!("{}/_tgm", dest_dir);
+                let mut file = File::create(dest_file).unwrap();
                 generate::<Zsh, _>(&mut build_app(), "tgm", &mut file);
                 // read .zshrc add enable tgm plugin
                 let zshrc_dest = format!("{}/.zshrc", home);
@@ -139,8 +140,8 @@ fn main() {
                         "Failed to load template from {}, please check the json data!",
                         url
                     )
-                    .as_str()
-                    .red()
+                        .as_str()
+                        .red()
                 );
             }
         }
