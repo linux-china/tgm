@@ -1,6 +1,6 @@
-#![feature(external_doc)]
+// #![feature(external_doc)]
+// #![doc(include = "../README.md")]
 #![doc(html_logo_url = "https://avatars2.githubusercontent.com/u/71794210?s=200&v=4")]
-#![doc(include = "../README.md")]
 
 mod app;
 mod licenses;
