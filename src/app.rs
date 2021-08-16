@@ -155,6 +155,7 @@ pub fn build_app() -> App<'static> {
     App::new("tgm")
         .version(VERSION)
         .about("Template generator manager: https://github.com/linux-china/tgm")
+        .license("Apache-2.0")
         .subcommand(list_command)
         .subcommand(config_command)
         .subcommand(license_command)
