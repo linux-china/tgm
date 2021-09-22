@@ -1,7 +1,7 @@
 //! clap App for command cli
 use clap::{App, Arg};
 
-const VERSION: &str = "0.8.1";
+const VERSION: &str = "0.9.1";
 
 pub fn build_app() -> App<'static> {
     let add_command = App::new("add")
