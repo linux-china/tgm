@@ -10,7 +10,7 @@ use crate::app::build_app;
 use crate::licenses::get_license;
 use crate::models::{AppTemplate, GithubRepo, Settings, Variable};
 use chrono::{DateTime, Datelike, Local};
-use clap_generate::generators::{Bash,Zsh};
+use clap_generate::generators::{Bash, Zsh};
 use clap_generate::generate;
 use colored::*;
 use regex::Regex;
@@ -210,14 +210,17 @@ fn list_remote_templates(settings: &Settings) {
     if let Ok(repos) = GithubRepo::fetch_tgm_template_repos(&org_name) {
         let mut i = 1;
         for repo in repos {
-            println!(
-                "{}. {} - {} : {}",
-                i,
-                repo.name.as_str().blue(),
-                repo.html_url,
-                repo.description
-            );
-            i = i + 1;
+            // ignore repo name starts with ".", such as '.github'
+            if !repo.name.starts_with(".") {
+                println!(
+                    "{}. {} - {} : {}",
+                    i,
+                    repo.name.as_str().blue(),
+                    repo.html_url,
+                    repo.description
+                );
+                i = i + 1;
+            }
         }
     } else {
         println!("Failed to fetch remote templates");
