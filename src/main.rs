@@ -73,9 +73,9 @@ fn main() {
         println!("📄 LICENSE file created!")
     } else if sub_command == "complete" {
         if args.is_present("zsh") {
-            generate::<Zsh, _>(&mut build_app(), "tgm", &mut std::io::stdout());
+            generate(Zsh,&mut build_app(), "tgm", &mut std::io::stdout());
         } else if args.is_present("bash") {
-            generate::<Bash, _>(&mut build_app(), "tgm", &mut std::io::stdout());
+            generate(Bash,&mut build_app(), "tgm", &mut std::io::stdout());
         } else if args.is_present("oh_my_zsh") {
             let home = env::var("HOME").unwrap();
             let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
@@ -84,7 +84,7 @@ fn main() {
                 // write _tgm file to plugin directory
                 let dest_file = format!("{}/_tgm", dest_dir);
                 let mut file = File::create(dest_file).unwrap();
-                generate::<Zsh, _>(&mut build_app(), "tgm", &mut file);
+                generate(Zsh,&mut build_app(), "tgm", &mut file);
                 // read .zshrc add enable tgm plugin
                 let zshrc_dest = format!("{}/.zshrc", home);
                 let zshrc_text =
