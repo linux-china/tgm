@@ -10,21 +10,21 @@ pub fn build_app() -> App<'static> {
             Arg::new("name")
                 .long("name") // allow --name
                 .takes_value(true)
-                .about("template name")
+                .help("template name")
                 .required(true),
         )
         .arg(
             Arg::new("repo")
                 .long("repo") // allow --name
                 .takes_value(true)
-                .about("git repository url")
+                .help("git repository url")
                 .required(true),
         )
         .arg(
             Arg::new("desc")
                 .long("desc") // allow --name
                 .takes_value(true)
-                .about("template description")
+                .help("template description")
                 .required(true),
         );
     let create_command = App::new("create")
@@ -33,7 +33,7 @@ pub fn build_app() -> App<'static> {
             Arg::new("name")
                 //.long("name") // allow --name
                 .takes_value(true)
-                .about("template name")
+                .help("template name")
                 .required(true)
                 .index(1),
         )
@@ -41,7 +41,7 @@ pub fn build_app() -> App<'static> {
             Arg::new("dir")
                 //.long("dir") // allow --name
                 .takes_value(true)
-                .about("App's directory")
+                .help("App's directory")
                 .required(true)
                 .index(2),
         );
@@ -50,14 +50,14 @@ pub fn build_app() -> App<'static> {
         .arg(
             Arg::new("name")
                 .takes_value(true)
-                .about("template name")
+                .help("template name")
                 .required(true),
         );
     let list_command = App::new("list").about("List templates").arg(
         Arg::new("remote")
             .long("remote")
             .takes_value(false)
-            .about("remotes template")
+            .help("remotes template")
             .required(false),
     );
     let config_command = App::new("config")
@@ -66,7 +66,7 @@ pub fn build_app() -> App<'static> {
             Arg::new("edit")
                 .long("edit")
                 .takes_value(false)
-                .about("edit global variables ")
+                .help("edit global variables ")
                 .required(false),
         );
     let complete_command = App::new("complete")
@@ -75,21 +75,21 @@ pub fn build_app() -> App<'static> {
             Arg::new("zsh")
                 .long("zsh")
                 .takes_value(false)
-                .about("Zsh completion")
+                .help("Zsh completion")
                 .required(false),
         )
         .arg(
             Arg::new("oh_my_zsh")
                 .long("oh_my_zsh")
                 .takes_value(false)
-                .about("Oh My Zsh")
+                .help("Oh My Zsh")
                 .required(false),
         )
         .arg(
             Arg::new("bash")
                 .long("bash")
                 .takes_value(false)
-                .about("Bash completion")
+                .help("Bash completion")
                 .required(false),
         );
     let import_command = App::new("import")
@@ -97,7 +97,7 @@ pub fn build_app() -> App<'static> {
         .arg(
             Arg::new("name")
                 .takes_value(true)
-                .about("github's repository name or absolute url")
+                .help("github's repository name or absolute url")
                 .required(true),
         );
     let license_command = App::new("license")
@@ -106,56 +106,55 @@ pub fn build_app() -> App<'static> {
             Arg::new("apache2")
                 .long("apache2")
                 .takes_value(false)
-                .about("Apache License 2.0")
+                .help("Apache License 2.0")
                 .required(false),
         )
         .arg(
             Arg::new("mit")
                 .long("mit")
                 .takes_value(false)
-                .about("MIT License")
+                .help("MIT License")
                 .required(false),
         )
         .arg(
             Arg::new("isc")
                 .long("isc")
                 .takes_value(false)
-                .about("ISC License")
+                .help("ISC License")
                 .required(false),
         )
         .arg(
             Arg::new("gplv3")
                 .long("gplv3")
                 .takes_value(false)
-                .about("GNU GPLv3 ")
+                .help("GNU GPLv3 ")
                 .required(false),
         )
         .arg(
             Arg::new("lgplv3")
                 .long("lgplv3")
                 .takes_value(false)
-                .about("GNU LGPLv3")
+                .help("GNU LGPLv3")
                 .required(false),
         )
         .arg(
             Arg::new("mozilla2")
                 .long("mozilla2")
                 .takes_value(false)
-                .about("Mozilla Public License 2.0")
+                .help("Mozilla Public License 2.0")
                 .required(false),
         )
         .arg(
             Arg::new("author")
                 .long("author")
                 .takes_value(true)
-                .about("Author name")
+                .help("Author name")
                 .required(true),
         );
     // init Clap
     App::new("tgm")
         .version(VERSION)
         .about("Template generator manager: https://github.com/linux-china/tgm")
-        .license("Apache-2.0")
         .subcommand(list_command)
         .subcommand(config_command)
         .subcommand(license_command)
