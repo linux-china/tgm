@@ -10,8 +10,7 @@ use crate::app::build_app;
 use crate::licenses::get_license;
 use crate::models::{AppTemplate, GithubRepo, Settings, Variable};
 use chrono::{DateTime, Datelike, Local};
-use clap_generate::generators::{Bash, Zsh};
-use clap_generate::generate;
+use clap_complete::shells::{Bash, Zsh};
 use colored::*;
 use regex::Regex;
 use std::collections::HashMap;
@@ -73,9 +72,9 @@ fn main() {
         println!("📄 LICENSE file created!")
     } else if sub_command == "complete" {
         if args.is_present("zsh") {
-            generate(Zsh,&mut build_app(), "tgm", &mut std::io::stdout());
+            clap_complete::generate(Zsh, &mut build_app(), "tgm", &mut std::io::stdout());
         } else if args.is_present("bash") {
-            generate(Bash,&mut build_app(), "tgm", &mut std::io::stdout());
+            clap_complete::generate(Bash, &mut build_app(), "tgm", &mut std::io::stdout());
         } else if args.is_present("oh_my_zsh") {
             let home = env::var("HOME").unwrap();
             let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
@@ -84,7 +83,7 @@ fn main() {
                 // write _tgm file to plugin directory
                 let dest_file = format!("{}/_tgm", dest_dir);
                 let mut file = File::create(dest_file).unwrap();
-                generate(Zsh,&mut build_app(), "tgm", &mut file);
+                clap_complete::generate(Zsh, &mut build_app(), "tgm", &mut file);
                 // read .zshrc add enable tgm plugin
                 let zshrc_dest = format!("{}/.zshrc", home);
                 let zshrc_text =
