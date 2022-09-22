@@ -1,5 +1,5 @@
 //! clap App for command cli
-use clap::{Command, Arg};
+use clap::{Command, Arg, ArgAction};
 
 const VERSION: &str = "0.10.0";
 
@@ -65,7 +65,7 @@ pub fn build_app() -> Command {
         .arg(
             Arg::new("edit")
                 .long("edit")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("edit global variables ")
                 .required(false),
         );
@@ -74,21 +74,21 @@ pub fn build_app() -> Command {
         .arg(
             Arg::new("zsh")
                 .long("zsh")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("Zsh completion")
                 .required(false),
         )
         .arg(
             Arg::new("oh_my_zsh")
                 .long("oh_my_zsh")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("Oh My Zsh")
                 .required(false),
         )
         .arg(
             Arg::new("bash")
                 .long("bash")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("Bash completion")
                 .required(false),
         );
@@ -105,49 +105,49 @@ pub fn build_app() -> Command {
         .arg(
             Arg::new("apache2")
                 .long("apache2")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("Apache License 2.0")
                 .required(false),
         )
         .arg(
             Arg::new("mit")
                 .long("mit")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("MIT License")
                 .required(false),
         )
         .arg(
             Arg::new("isc")
                 .long("isc")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("ISC License")
                 .required(false),
         )
         .arg(
             Arg::new("gplv3")
                 .long("gplv3")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("GNU GPLv3 ")
                 .required(false),
         )
         .arg(
             Arg::new("lgplv3")
                 .long("lgplv3")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("GNU LGPLv3")
                 .required(false),
         )
         .arg(
             Arg::new("mozilla2")
                 .long("mozilla2")
-                .num_args(0)
+                .action(ArgAction::SetTrue)
                 .help("Mozilla Public License 2.0")
                 .required(false),
         )
         .arg(
             Arg::new("author")
                 .long("author")
-                .num_args(0)
+                .num_args(1)
                 .help("Author name")
                 .required(true),
         );
