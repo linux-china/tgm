@@ -34,30 +34,31 @@ fn main() {
     let settings = Settings::load();
     let (sub_command, args) = matches.subcommand().unwrap();
     if sub_command == "list" {
-        if args.is_present("remote") {
+        if args.contains_id("remote") {
             list_remote_templates(&settings);
         } else {
             list_templates(&settings);
         }
     } else if sub_command == "config" {
-        if args.is_present("edit") {
+        if args.contains_id("edit") {
             config_global_variables();
         } else {
             show_global_variables(&settings);
         }
     } else if sub_command == "license" {
-        let author_name = args.value_of("author").unwrap_or("Anonymous");
-        let license_type = if args.is_present("apache2") {
+        let anonymous = "Anonymous".to_owned();
+        let author_name = args.get_one::<String>("author").unwrap_or(&anonymous);
+        let license_type = if args.contains_id("apache2") {
             "apache2"
-        } else if args.is_present("mit") {
+        } else if args.contains_id("mit") {
             "mit"
-        } else if args.is_present("isc") {
+        } else if args.contains_id("isc") {
             "isc"
-        } else if args.is_present("gplv3") {
+        } else if args.contains_id("gplv3") {
             "gplv3"
-        } else if args.is_present("lgplv3") {
+        } else if args.contains_id("lgplv3") {
             "lgplv3"
-        } else if args.is_present("mozilla2") {
+        } else if args.contains_id("mozilla2") {
             "mozilla2"
         } else {
             ""
@@ -71,11 +72,11 @@ fn main() {
         license_file.write_all(license_text.as_bytes()).unwrap();
         println!("📄 LICENSE file created!")
     } else if sub_command == "complete" {
-        if args.is_present("zsh") {
+        if args.contains_id("zsh") {
             clap_complete::generate(Zsh, &mut build_app(), "tgm", &mut std::io::stdout());
-        } else if args.is_present("bash") {
+        } else if args.contains_id("bash") {
             clap_complete::generate(Bash, &mut build_app(), "tgm", &mut std::io::stdout());
-        } else if args.is_present("oh_my_zsh") {
+        } else if args.contains_id("oh_my_zsh") {
             let home = env::var("HOME").unwrap();
             let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
             let result = std::fs::create_dir_all(Path::new(&dest_dir));
@@ -99,12 +100,12 @@ fn main() {
             }
         }
     } else if sub_command == "add" {
-        let name = args.value_of("name").unwrap();
-        let repo = args.value_of("repo").unwrap();
-        let desc = args.value_of("desc").unwrap();
+        let name = args.get_one::<String>("name").unwrap();
+        let repo = args.get_one::<String>("repo").unwrap();
+        let desc = args.get_one::<String>("desc").unwrap();
         add_template(name, repo, desc);
     } else if sub_command == "import" {
-        let mut url = String::from(args.value_of("name").unwrap());
+        let mut url = String::from(args.get_one::<String>("name").unwrap());
         if !(url.starts_with("http://") || url.starts_with("https://")) {
             // github template repository
             if !url.contains("/") {
@@ -145,11 +146,11 @@ fn main() {
             }
         }
     } else if sub_command == "remove" {
-        let name = args.value_of("name").unwrap();
+        let name = args.get_one::<String>("name").unwrap();
         delete_template(name);
     } else if sub_command == "create" {
-        let template_name = args.value_of("name").unwrap();
-        let app_dir = args.value_of("dir").unwrap();
+        let template_name = args.get_one::<String>("name").unwrap();
+        let app_dir = args.get_one::<String>("dir").unwrap();
         let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
         let dest_dir = format!("{}/{}", current_dir, app_dir);
         let dest_path = Path::new(&dest_dir);
