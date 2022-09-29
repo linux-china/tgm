@@ -34,13 +34,13 @@ fn main() {
     let settings = Settings::load();
     let (sub_command, args) = matches.subcommand().unwrap();
     if sub_command == "list" {
-        if args.contains_id("remote") {
+        if args.get_flag("remote") {
             list_remote_templates(&settings);
         } else {
             list_templates(&settings);
         }
     } else if sub_command == "config" {
-        if args.contains_id("edit") {
+        if args.get_flag("edit") {
             config_global_variables();
         } else {
             show_global_variables(&settings);
@@ -48,17 +48,17 @@ fn main() {
     } else if sub_command == "license" {
         let anonymous = "Anonymous".to_owned();
         let author_name = args.get_one::<String>("author").unwrap_or(&anonymous);
-        let license_type = if args.contains_id("apache2") {
+        let license_type = if args.get_flag("apache2") {
             "apache2"
-        } else if args.contains_id("mit") {
+        } else if args.get_flag("mit") {
             "mit"
-        } else if args.contains_id("isc") {
+        } else if args.get_flag("isc") {
             "isc"
-        } else if args.contains_id("gplv3") {
+        } else if args.get_flagget_flag("gplv3") {
             "gplv3"
-        } else if args.contains_id("lgplv3") {
+        } else if args.get_flag("lgplv3") {
             "lgplv3"
-        } else if args.contains_id("mozilla2") {
+        } else if args.get_flag("mozilla2") {
             "mozilla2"
         } else {
             ""
@@ -72,11 +72,11 @@ fn main() {
         license_file.write_all(license_text.as_bytes()).unwrap();
         println!("📄 LICENSE file created!")
     } else if sub_command == "complete" {
-        if args.contains_id("zsh") {
+        if args.get_flag("zsh") {
             clap_complete::generate(Zsh, &mut build_app(), "tgm", &mut std::io::stdout());
-        } else if args.contains_id("bash") {
+        } else if args.get_flag("bash") {
             clap_complete::generate(Bash, &mut build_app(), "tgm", &mut std::io::stdout());
-        } else if args.contains_id("oh_my_zsh") {
+        } else if args.get_flag("oh_my_zsh") {
             let home = env::var("HOME").unwrap();
             let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
             let result = std::fs::create_dir_all(Path::new(&dest_dir));
