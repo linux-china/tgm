@@ -54,7 +54,7 @@ fn main() {
             "mit"
         } else if args.get_flag("isc") {
             "isc"
-        } else if args.get_flagget_flag("gplv3") {
+        } else if args.get_flag("gplv3") {
             "gplv3"
         } else if args.get_flag("lgplv3") {
             "lgplv3"
