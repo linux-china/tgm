@@ -79,7 +79,7 @@ fn main() {
         } else if args.get_flag("oh_my_zsh") {
             let home = env::var("HOME").unwrap();
             let dest_dir = format!("{}/.oh-my-zsh/custom/plugins/tgm", home);
-            let result = std::fs::create_dir_all(Path::new(&dest_dir));
+            let result = fs::create_dir_all(Path::new(&dest_dir));
             if result.is_ok() {
                 // write _tgm file to plugin directory
                 let dest_file = format!("{}/_tgm", dest_dir);
@@ -151,7 +151,7 @@ fn main() {
     } else if sub_command == "create" {
         let template_name = args.get_one::<String>("name").unwrap();
         let app_dir = args.get_one::<String>("dir").unwrap();
-        let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+        let current_dir = String::from(env::current_dir().unwrap().to_str().unwrap());
         let dest_dir = format!("{}/{}", current_dir, app_dir);
         let dest_path = Path::new(&dest_dir);
         if dest_path.exists() {
@@ -238,9 +238,9 @@ fn show_global_variables(settings: &Settings) {
     let now: DateTime<Local> = Local::now();
     println!("current_year: {}", now.year().to_string());
     println!("current_date: {}", now.format("%m/%d/%Y").to_string());
-    println!("os_name: {}", String::from(std::env::consts::OS));
-    println!("os_family: {}", String::from(std::env::consts::FAMILY));
-    println!("os_arch: {}", String::from(std::env::consts::ARCH));
+    println!("os_name: {}", String::from(env::consts::OS));
+    println!("os_family: {}", String::from(env::consts::FAMILY));
+    println!("os_arch: {}", String::from(env::consts::ARCH));
 }
 
 fn config_global_variables() {
@@ -353,14 +353,14 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
         now.format("%m/%d/%Y").to_string(),
     );
     //os related variables
-    variables.insert(String::from("os_name"), String::from(std::env::consts::OS));
+    variables.insert(String::from("os_name"), String::from(env::consts::OS));
     variables.insert(
         String::from("os_family"),
-        String::from(std::env::consts::FAMILY),
+        String::from(env::consts::FAMILY),
     );
     variables.insert(
         String::from("os_arch"),
-        String::from(std::env::consts::ARCH),
+        String::from(env::consts::ARCH),
     );
     if app_template.variables.is_some() {
         println!("🤗 Please complete template variables.");
@@ -389,7 +389,7 @@ fn prompt_input_variables(settings: &Settings, app_dest_dir: &str) {
             }
         }
     }
-    std::env::set_current_dir(Path::new(app_dest_dir)).unwrap();
+    env::set_current_dir(Path::new(app_dest_dir)).unwrap();
     // re-init
     execute_command("rm", &["-rf", ".git"]).unwrap_or(String::new());
     execute_command("git", &["init"]).unwrap_or(String::new());
@@ -474,7 +474,7 @@ mod tests {
         let settings = Settings::load();
         let template_name = "spring-boot-java";
         let app_dir = "temp/demo";
-        let current_dir = String::from(std::env::current_dir().unwrap().to_str().unwrap());
+        let current_dir = String::from(env::current_dir().unwrap().to_str().unwrap());
         create_app(template_name, &current_dir, app_dir, &settings);
     }
 
