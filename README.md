@@ -4,7 +4,8 @@ tgm - Template Generator Manager
 [![tgm Crate](https://img.shields.io/crates/v/tgm)](https://crates.io/crates/tgm)
 [![dependency status](https://deps.rs/crate/tgm/0.10.0/status.svg)](https://deps.rs/crate/tgm/0.10.0)
 
-Generate project structure from git template repository.
+Generate project structure from git template repository, 
+and ignited by [MicroServices Service Template Pattern](https://microservices.io/patterns/service-template.html)
 
 Why tgm?
 
